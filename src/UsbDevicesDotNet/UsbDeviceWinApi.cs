@@ -8,6 +8,8 @@
         public const Int32 ERROR_SUCCESS = 0;
         public const Int32 ERROR_NO_MORE_ITEMS = 259;
 
+        public const Int32 CR_SUCCESS = 0;
+
         public const Int32 SpDrpLocationInformation = 0x0000000D;
 
         [Flags]
@@ -51,6 +53,12 @@
 
         [DllImport("setupapi.dll", SetLastError = true)]
         public static extern Int32 CM_Get_Parent(out UInt32 devInstParent, UInt32 devInst, Int32 flags);
+
+        [DllImport("setupapi.dll", SetLastError = true)]
+        public static extern Int32 CM_Get_Child(out UInt32 devInstChild, UInt32 devInst, Int32 ulFlags);
+
+        [DllImport("setupapi.dll", SetLastError = true)]
+        public static extern Int32 CM_Get_Sibling(out UInt32 devInstSibling, UInt32 devInst, Int32 ulFlags);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern Int32 CM_Get_Device_ID(UInt32 devInst, IntPtr buffer, Int32 bufferLen, Int32 flags);

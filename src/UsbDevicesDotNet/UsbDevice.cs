@@ -13,6 +13,8 @@ namespace Vurdalakov.UsbDevicesDotNet
         public String DevicePath { get; set; }
         public String DeviceId { get; set; }
 
+        public String[] InterfaceIds { get; set; }
+
         public String BusReportedDeviceDescription { get; set; }
 
         public static UsbDevice[] GetDevices(Guid classGuid)

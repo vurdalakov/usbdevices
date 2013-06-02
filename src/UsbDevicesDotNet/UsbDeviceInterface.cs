@@ -1,6 +1,7 @@
 ﻿namespace Vurdalakov.UsbDevicesDotNet
 {
     using System;
+    using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
     internal class UsbDeviceInterface : UsbDeviceBase
@@ -30,7 +31,8 @@
                 return;
             }
 
-            this.GetDeviceId();
+            this.UsbDevice.DeviceId = this.GetDeviceId();
+            this.UsbDevice.InterfaceIds = this.GetInterfaceIds(this.devInfoData.DevInst, this.UsbDevice.DeviceId);
 
             this.UsbDevice.Vid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "VID_", 4).ToUpper();
             this.UsbDevice.Pid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "PID_", 4).ToUpper();
@@ -64,8 +66,10 @@
             return success;
         }
 
-        private void GetDeviceId()
+        private String GetDeviceId()
         {
+            String deviceId = null;
+
             Int32 bufferSize = 512;
             IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
 
@@ -73,10 +77,10 @@
 
             if (UsbDeviceWinApi.ERROR_SUCCESS == errorCode)
             {
-                this.UsbDevice.DeviceId = Marshal.PtrToStringAuto(buffer);
+                deviceId = Marshal.PtrToStringAuto(buffer);
 
-                int slash = this.UsbDevice.DeviceId.LastIndexOf('\\');
-                if ((slash > 0) && (this.UsbDevice.DeviceId.LastIndexOf('-') > slash))
+                int slash = deviceId.LastIndexOf('\\');
+                if ((slash > 0) && (deviceId.LastIndexOf('-') > slash))
                 {
                     UInt32 devInstParent;
                     errorCode = UsbDeviceWinApi.CM_Get_Parent(out devInstParent, this.devInfoData.DevInst, 0);
@@ -87,7 +91,7 @@
 
                         if (UsbDeviceWinApi.ERROR_SUCCESS == errorCode)
                         {
-                            this.UsbDevice.DeviceId = Marshal.PtrToStringAuto(buffer);
+                            deviceId = Marshal.PtrToStringAuto(buffer);
                         }
                         else
                         {
@@ -106,6 +110,52 @@
             }
 
             Marshal.FreeHGlobal(buffer);
+
+            return deviceId;
+        }
+
+        private String[] GetInterfaceIds(UInt32 devInst, String deviceId)
+        {
+            List<String> ids = new List<String>();             
+
+            UInt32 devInstChild;
+            Int32 errorCode = UsbDeviceWinApi.CM_Get_Child(out devInstChild, devInst, 0);
+            if (UsbDeviceWinApi.CR_SUCCESS != errorCode)
+            {
+                this.TraceError("CM_Get_Child", errorCode);
+
+                ids.Add(deviceId);
+                return ids.ToArray();
+            }
+
+            Int32 bufferSize = 512;
+            IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+
+            errorCode = UsbDeviceWinApi.CM_Get_Device_ID(devInstChild, buffer, bufferSize, 0);
+            if (UsbDeviceWinApi.CR_SUCCESS != errorCode)
+            {
+                this.TraceError("CM_Get_Device_ID", errorCode);
+
+                return ids.ToArray();
+            }
+            
+            String interfaceId = Marshal.PtrToStringAuto(buffer);
+            ids.Add(interfaceId);
+
+            while (true)
+            {
+                errorCode = UsbDeviceWinApi.CM_Get_Sibling(out devInstChild, this.devInfoData.DevInst, 0);
+                if (UsbDeviceWinApi.CR_SUCCESS != errorCode)
+                {
+                    this.TraceError("CM_Get_Sibling", errorCode);
+                    break;
+                }
+                
+                interfaceId = Marshal.PtrToStringAuto(buffer);
+                ids.Add(interfaceId);
+            }
+
+            return ids.ToArray();
         }
 
         private void GetHubAndPort()

@@ -12,7 +12,8 @@
         public UsbDevices(Guid classGuid)
         {
             this.classGuid = classGuid;
-            this.handle = UsbDeviceWinApi.SetupDiGetClassDevs(ref classGuid, IntPtr.Zero, IntPtr.Zero, UsbDeviceWinApi.SetupDiGetClassDevsFlags.DIGCF_PRESENT | UsbDeviceWinApi.SetupDiGetClassDevsFlags.DIGCF_DEVICEINTERFACE);
+            this.handle = UsbDeviceWinApi.SetupDiGetClassDevs(ref classGuid, IntPtr.Zero, IntPtr.Zero,
+                UsbDeviceWinApi.SetupDiGetClassDevsFlags.DIGCF_PRESENT | UsbDeviceWinApi.SetupDiGetClassDevsFlags.DIGCF_DEVICEINTERFACE);
 
             if (this.IsInvalid())
             {
