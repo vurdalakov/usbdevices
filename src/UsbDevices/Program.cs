@@ -12,8 +12,9 @@
 
             foreach (UsbDevice usbDevice in usbDevices)
             {
-                Console.WriteLine("VID_{0}&PID_{1}\nHub:Port = {2}:{3}\nDevice ID    = {4}",
-                    usbDevice.Vid, usbDevice.Pid, usbDevice.Hub, usbDevice.Port, usbDevice.DeviceId);
+                Console.WriteLine("VID_{0}&PID_{1}", usbDevice.Vid, usbDevice.Pid);
+                Console.WriteLine("Hub:Port = {0}:{1}", usbDevice.Hub, usbDevice.Port);
+                Console.WriteLine("Device ID    = {0}", usbDevice.DeviceId);
 
                 foreach (String interfaceId in usbDevice.InterfaceIds)
                 {
