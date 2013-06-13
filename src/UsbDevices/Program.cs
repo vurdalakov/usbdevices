@@ -6,7 +6,7 @@
     {
         static void Main(String[] args)
         {
-            UsbDevice[] usbDevices = UsbDevice.GetDevices(new Guid("A5DCBF10-6530-11D2-901F-00C04FB951ED"));
+            UsbDevice[] usbDevices = UsbDevice.GetDevices();
 
             Console.WriteLine("{0} USB devices:\n", usbDevices.Length);
 

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Vurdalakov.UsbDevicesDotNet
+﻿namespace Vurdalakov.UsbDevicesDotNet
 {
+    using System;
+
     public class UsbDevice
     {
         public String Vid { get; set; }
@@ -16,6 +16,11 @@ namespace Vurdalakov.UsbDevicesDotNet
         public String[] InterfaceIds { get; set; }
 
         public String BusReportedDeviceDescription { get; set; }
+
+        public static UsbDevice[] GetDevices()
+        {
+            return UsbDevice.GetDevices(new Guid(UsbDeviceGuids.GUID_DEVINTERFACE_USB_DEVICE));
+        }
 
         public static UsbDevice[] GetDevices(Guid classGuid)
         {
