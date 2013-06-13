@@ -128,34 +128,54 @@
                 return ids.ToArray();
             }
 
-            Int32 bufferSize = 512;
-            IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+            String interfaceId = this.GetDeviceId(devInstChild);
 
-            errorCode = UsbDeviceWinApi.CM_Get_Device_ID(devInstChild, buffer, bufferSize, 0);
-            if (UsbDeviceWinApi.CR_SUCCESS != errorCode)
+            if (!String.IsNullOrEmpty(interfaceId))
             {
-                this.TraceError("CM_Get_Device_ID", errorCode);
-
-                return ids.ToArray();
-            }
-            
-            String interfaceId = Marshal.PtrToStringAuto(buffer);
-            ids.Add(interfaceId);
-
-            while (true)
-            {
-                errorCode = UsbDeviceWinApi.CM_Get_Sibling(out devInstChild, this.devInfoData.DevInst, 0);
-                if (UsbDeviceWinApi.CR_SUCCESS != errorCode)
-                {
-                    this.TraceError("CM_Get_Sibling", errorCode);
-                    break;
-                }
-                
-                interfaceId = Marshal.PtrToStringAuto(buffer);
                 ids.Add(interfaceId);
+
+                UInt32 devInstSibling = devInstChild;
+                while (true)
+                {
+                    errorCode = UsbDeviceWinApi.CM_Get_Sibling(out devInstSibling, devInstSibling, 0);
+                    if (UsbDeviceWinApi.CR_SUCCESS != errorCode)
+                    {
+                        this.TraceError("CM_Get_Sibling", errorCode);
+                        break;
+                    }
+
+                    interfaceId = this.GetDeviceId(devInstSibling);
+
+                    if (!String.IsNullOrEmpty(interfaceId))
+                    {
+                        ids.Add(interfaceId);
+                    }
+                }
             }
 
             return ids.ToArray();
+        }
+
+        private String GetDeviceId(UInt32 devInst)
+        {
+            Int32 bufferSize = 1024;
+            IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+
+            String deviceId = null;
+
+            Int32 errorCode = UsbDeviceWinApi.CM_Get_Device_ID(devInst, buffer, bufferSize, 0);
+            if (UsbDeviceWinApi.CR_SUCCESS == errorCode)
+            {
+                deviceId = Marshal.PtrToStringAuto(buffer);
+            }
+            else
+            {
+                this.TraceError("CM_Get_Device_ID", errorCode);
+            }
+
+            Marshal.FreeHGlobal(buffer);
+
+            return deviceId;
         }
 
         private void GetHubAndPort()
