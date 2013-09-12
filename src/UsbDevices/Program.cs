@@ -14,12 +14,15 @@
             {
                 Console.WriteLine("VID_{0}&PID_{1}", usbDevice.Vid, usbDevice.Pid);
                 Console.WriteLine("Hub:Port = {0}:{1}", usbDevice.Hub, usbDevice.Port);
-                Console.WriteLine("Device ID    = {0}", usbDevice.DeviceId);
+                Console.WriteLine("Device ID     = {0}", usbDevice.DeviceId);
 
                 foreach (String interfaceId in usbDevice.InterfaceIds)
                 {
-                    Console.WriteLine("Interface ID = {0}", interfaceId);
+                    Console.WriteLine("Interface ID  = {0}", interfaceId);
                 }
+
+                Console.WriteLine("LocationInformation = {0}", usbDevice.RegistryProperties[UsbDeviceWinApi.SpDrpLocationInformation]);
+                Console.WriteLine("LocationPaths = {0}", usbDevice.RegistryProperties[UsbDeviceWinApi.SpDrpLocationPaths]);
 
                 if (!String.IsNullOrEmpty(usbDevice.BusReportedDeviceDescription))
                 {

@@ -1,6 +1,7 @@
 ﻿namespace Vurdalakov.UsbDevicesDotNet
 {
     using System;
+    using System.Collections.Generic;
 
     public class UsbDevice
     {
@@ -16,6 +17,13 @@
         public String[] InterfaceIds { get; set; }
 
         public String BusReportedDeviceDescription { get; set; }
+
+        public Dictionary<UInt32, String> RegistryProperties { get; private set; }
+
+        public UsbDevice()
+        {
+            this.RegistryProperties = new Dictionary<UInt32, String>();
+        }
 
         public static UsbDevice[] GetDevices()
         {

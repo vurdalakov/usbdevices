@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.InteropServices;
 
-    internal static class UsbDeviceWinApi
+    public static class UsbDeviceWinApi
     {
         public const Int32 ERROR_SUCCESS = 0;
         public const Int32 ERROR_NO_MORE_ITEMS = 259;
@@ -11,6 +11,8 @@
         public const Int32 CR_SUCCESS = 0;
 
         public const Int32 SpDrpLocationInformation = 0x0000000D;
+        public const Int32 SpDrpLocationPaths = 0x00000023;
+        public const Int32 SpDrpMaximumProperty = 0x00000025;
 
         [Flags]
         public enum SetupDiGetClassDevsFlags

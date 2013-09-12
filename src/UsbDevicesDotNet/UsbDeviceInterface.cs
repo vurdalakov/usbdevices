@@ -38,7 +38,9 @@
             this.UsbDevice.Pid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "PID_", 4).ToUpper();
 
             this.UsbDevice.BusReportedDeviceDescription = this.ReadBusReportedDeviceDescription(); // TODO: unify
-            this.GetHubAndPort(); // TODO: unify
+
+            this.GetRegistryProperties();
+            this.GetHubAndPort();
         }
 
         private Boolean GetDeviceInterfaceDetail()
@@ -178,32 +180,39 @@
             return deviceId;
         }
 
+        private void GetRegistryProperties()
+        {
+            for (UInt32 property = 0; property < UsbDeviceWinApi.SpDrpMaximumProperty; property++)
+            {
+                UInt32 regtype;
+                UInt32 bufferSize = 512;
+                IntPtr buffer = Marshal.AllocHGlobal((Int32)bufferSize);
+                UInt32 requiredSize;
+
+                Boolean success = UsbDeviceWinApi.SetupDiGetDeviceRegistryProperty(this.handle, ref this.devInfoData,
+                    property, out regtype, buffer, bufferSize, out requiredSize);
+
+                if (success)
+                {
+                    String value = Marshal.PtrToStringAuto(buffer);
+                    this.UsbDevice.RegistryProperties.Add(property, value);
+                }
+                else
+                {
+                    this.UsbDevice.RegistryProperties.Add(property, null);
+                    this.TraceError("SetupDiGetDeviceRegistryProperty");
+                }
+
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+
         private void GetHubAndPort()
         {
-            UInt32 regtype;
-            UInt32 bufferSize = 512;
-            IntPtr buffer = Marshal.AllocHGlobal((Int32)bufferSize);
-            UInt32 requiredSize;
+            String value = this.UsbDevice.RegistryProperties[UsbDeviceWinApi.SpDrpLocationInformation];
 
-            Boolean success = UsbDeviceWinApi.SetupDiGetDeviceRegistryProperty(this.handle, ref this.devInfoData,
-                UsbDeviceWinApi.SpDrpLocationInformation, out regtype, buffer, bufferSize, out requiredSize);
-
-            if (success)
-            {
-                String value = Marshal.PtrToStringAuto(buffer);
-
-                if (value != null)
-                {
-                    this.UsbDevice.Hub = ExtractStringAfterPrefix(value, "Hub_#", 4);
-                    this.UsbDevice.Port = ExtractStringAfterPrefix(value, "Port_#", 4);
-                }
-            }
-            else
-            {
-                this.TraceError("SetupDiGetDeviceRegistryProperty");
-            }
-
-            Marshal.FreeHGlobal(buffer);
+            this.UsbDevice.Hub = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Hub_#", 4);
+            this.UsbDevice.Port = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Port_#", 4);
         }
 
         private String ReadBusReportedDeviceDescription()
