@@ -241,30 +241,29 @@
             propertyKeyArrayPinned.Free();
         }
 
-        private Object MarshalDeviceProperty(IntPtr buffer, Int32 bufferSize, UInt32 propertyType)
+        private Object MarshalDeviceProperty(IntPtr source, Int32 length, UInt32 type)
         {
-            // Covers all types mentioned in devpkey.h
-            // TODO: add other types
-            switch (propertyType)
+            // TODO: add other types; now covers only all types that are mentioned in devpkey.h
+            switch (type)
             {
                 case UsbDeviceWinApi.DEVPROP_TYPE_UINT32:
-                    return (UInt32)Marshal.ReadInt32(buffer);
+                    return (UInt32)Marshal.ReadInt32(source);
                 case UsbDeviceWinApi.DEVPROP_TYPE_GUID:
-                    return MarshalEx.ReadGuid(buffer, bufferSize);
+                    return MarshalEx.ReadGuid(source, length);
                 case UsbDeviceWinApi.DEVPROP_TYPE_FILETIME:
-                    return MarshalEx.ReadFileTime(buffer);
+                    return MarshalEx.ReadFileTime(source);
                 case UsbDeviceWinApi.DEVPROP_TYPE_BOOLEAN:
-                    return Marshal.ReadByte(buffer) != 0;
+                    return Marshal.ReadByte(source) != 0;
                 case UsbDeviceWinApi.DEVPROP_TYPE_STRING:
-                    return Marshal.PtrToStringUni(buffer);
+                    return Marshal.PtrToStringUni(source);
                 case UsbDeviceWinApi.DEVPROP_TYPE_SECURITY_DESCRIPTOR:
-                    return MarshalEx.ReadSecurityDescriptor(buffer, bufferSize);
+                    return MarshalEx.ReadSecurityDescriptor(source, length);
                 case UsbDeviceWinApi.DEVPROP_TYPE_SECURITY_DESCRIPTOR_STRING:
-                    return Marshal.PtrToStringUni(buffer);
+                    return Marshal.PtrToStringUni(source);
                 case UsbDeviceWinApi.DEVPROP_TYPE_BINARY:
-                    return MarshalEx.ReadByteArray(buffer, bufferSize);
+                    return MarshalEx.ReadByteArray(source, length);
                 case UsbDeviceWinApi.DEVPROP_TYPE_STRING_LIST:
-                    return MarshalEx.ReadMultiSzStringList(buffer, bufferSize);
+                    return MarshalEx.ReadMultiSzStringList(source, length);
                 default:
                     return null;
             }

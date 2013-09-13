@@ -53,6 +53,7 @@
             return DateTime.FromFileTimeUtc(fileTime);
         }
 
+        // TODO: not tested
         public static RawSecurityDescriptor ReadSecurityDescriptor(IntPtr source, Int32 length)
         {
             Byte[] byteArray = MarshalEx.ReadByteArray(source, 0, length);
