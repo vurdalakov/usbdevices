@@ -6,6 +6,7 @@
     public static class UsbDeviceWinApi
     {
         public const Int32 ERROR_SUCCESS = 0;
+        public const Int32 ERROR_INVALID_DATA = 13;
         public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
         public const Int32 ERROR_NO_MORE_ITEMS = 259;
 

@@ -288,25 +288,39 @@
             for (UInt32 property = 0; property < UsbDeviceWinApi.SpDrpMaximumProperty; property++)
             {
                 UInt32 regtype;
-                UInt32 bufferSize = 512;
-                IntPtr buffer = Marshal.AllocHGlobal((Int32)bufferSize);
                 UInt32 requiredSize;
 
                 Boolean success = UsbDeviceWinApi.SetupDiGetDeviceRegistryProperty(this.handle, ref this.devInfoData,
-                    property, out regtype, buffer, bufferSize, out requiredSize);
+                    property, out regtype, IntPtr.Zero, 0, out requiredSize);
 
-                if (success)
+                if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
                 {
-                    String value = Marshal.PtrToStringAuto(buffer);
-                    this.UsbDevice.RegistryProperties.Add(property, value);
+                    this.UsbDevice.RegistryProperties.Add(property, null);
+                    if (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INVALID_DATA)
+                    {
+                        this.TraceError("SetupDiGetDeviceRegistryProperty");
+                    }
                 }
                 else
                 {
-                    this.UsbDevice.RegistryProperties.Add(property, null);
-                    this.TraceError("SetupDiGetDeviceRegistryProperty");
-                }
+                    IntPtr buffer = Marshal.AllocHGlobal((Int32)requiredSize);
 
-                Marshal.FreeHGlobal(buffer);
+                    success = UsbDeviceWinApi.SetupDiGetDeviceRegistryProperty(this.handle, ref this.devInfoData,
+                        property, out regtype, buffer, requiredSize, out requiredSize);
+
+                    if (success)
+                    {
+                        String value = Marshal.PtrToStringAuto(buffer);
+                        this.UsbDevice.RegistryProperties.Add(property, value);
+                    }
+                    else
+                    {
+                        this.UsbDevice.RegistryProperties.Add(property, null);
+                        this.TraceError("SetupDiGetDeviceRegistryProperty");
+                    }
+
+                    Marshal.FreeHGlobal(buffer);
+                }
             }
         }
 
