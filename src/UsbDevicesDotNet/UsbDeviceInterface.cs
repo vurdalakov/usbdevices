@@ -285,7 +285,7 @@
 
         private void GetRegistryProperties()
         {
-            for (UInt32 property = 0; property < UsbDeviceWinApi.SpDrpMaximumProperty; property++)
+            for (UInt32 property = 0; property < UsbDeviceWinApi.SPDRP_MAXIMUM_PROPERTY; property++)
             {
                 UInt32 regtype;
                 UInt32 requiredSize;
@@ -326,7 +326,7 @@
 
         private void GetHubAndPort()
         {
-            String value = this.UsbDevice.RegistryProperties[UsbDeviceWinApi.SpDrpLocationInformation];
+            String value = this.UsbDevice.RegistryProperties[UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION];
 
             this.UsbDevice.Hub = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Hub_#", 4);
             this.UsbDevice.Port = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Port_#", 4);
