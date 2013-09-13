@@ -10,7 +10,7 @@
         public static UsbDevice GetUsbDevice(IntPtr handle, UsbDeviceWinApi.SP_DEVICE_INTERFACE_DATA deviceInterfaceData)
         {
             UsbDeviceInterface usbDeviceInterface = new UsbDeviceInterface(handle, deviceInterfaceData);
-            return usbDeviceInterface.UsbDevice;
+            return usbDeviceInterface.GetDevice();
         }
 
         private IntPtr handle;
@@ -18,38 +18,43 @@
 
         private UsbDeviceWinApi.SP_DEVINFO_DATA devInfoData;
 
-        public UsbDevice UsbDevice { get; private set; }
-
         private UsbDeviceInterface(IntPtr handle, UsbDeviceWinApi.SP_DEVICE_INTERFACE_DATA deviceInterfaceData)
         {
             this.handle = handle;
             this.deviceInterfaceData = deviceInterfaceData;
-
-            this.UsbDevice = new UsbDevice();
-
-            if (!this.GetDeviceInterfaceDetail())
-            {
-                return;
-            }
-
-            this.UsbDevice.DeviceId = this.GetDeviceId();
-            this.UsbDevice.InterfaceIds = this.GetInterfaceIds(this.devInfoData.DevInst, this.UsbDevice.DeviceId);
-
-            this.UsbDevice.Vid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "VID_", 4).ToUpper();
-            this.UsbDevice.Pid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "PID_", 4).ToUpper();
-
-            this.GetProperties();
-
-            this.UsbDevice.BusReportedDeviceDescription = this.UsbDevice.GetPropertyValue(UsbDeviceWinApi.DEVPKEY_Device_BusReportedDeviceDesc) as String;
-
-            this.GetRegistryProperties();
-
-            String hubAndPort = this.UsbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION) as String;
-            this.UsbDevice.Hub = this.ExtractStringAfterPrefix(hubAndPort, "Hub_#", 4);
-            this.UsbDevice.Port = this.ExtractStringAfterPrefix(hubAndPort, "Port_#", 4);
         }
 
-        private Boolean GetDeviceInterfaceDetail()
+        private UsbDevice GetDevice()
+        {
+            UsbDevice usbDevice = new UsbDevice();
+
+            usbDevice.DevicePath = this.GetDeviceInterfaceDetail();
+            
+            if (null == usbDevice.DevicePath)
+            {
+                return null;
+            }
+
+            usbDevice.DeviceId = this.GetDeviceId();
+            usbDevice.InterfaceIds = this.GetInterfaceIds(this.devInfoData.DevInst, usbDevice.DeviceId);
+
+            usbDevice.Vid = this.ExtractStringAfterPrefix(usbDevice.DeviceId, "VID_", 4).ToUpper();
+            usbDevice.Pid = this.ExtractStringAfterPrefix(usbDevice.DeviceId, "PID_", 4).ToUpper();
+
+            usbDevice.Properties = this.GetProperties();
+
+            usbDevice.BusReportedDeviceDescription = usbDevice.GetPropertyValue(UsbDeviceWinApi.DEVPKEY_Device_BusReportedDeviceDesc) as String;
+
+            usbDevice.RegistryProperties = this.GetRegistryProperties();
+
+            String hubAndPort = usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION) as String;
+            usbDevice.Hub = this.ExtractStringAfterPrefix(hubAndPort, "Hub_#", 4);
+            usbDevice.Port = this.ExtractStringAfterPrefix(hubAndPort, "Port_#", 4);
+
+            return usbDevice;
+        }
+
+        private String GetDeviceInterfaceDetail()
         {
             UsbDeviceWinApi.SP_DEVICE_INTERFACE_DETAIL_DATA deviceInterfaceDetailData = new UsbDeviceWinApi.SP_DEVICE_INTERFACE_DETAIL_DATA();
             deviceInterfaceDetailData.Size = (UInt32)(8 == IntPtr.Size ? 8 : 6);
@@ -60,18 +65,17 @@
             this.devInfoData.Size = (UInt32)Marshal.SizeOf(devInfoData);
 
             Boolean success = UsbDeviceWinApi.SetupDiGetDeviceInterfaceDetail(this.handle, ref this.deviceInterfaceData,
-                ref deviceInterfaceDetailData, 512, out requiredSize, ref this.devInfoData);
+                ref deviceInterfaceDetailData, deviceInterfaceDetailData.Size, out requiredSize, ref this.devInfoData);
 
             if (success)
             {
-                this.UsbDevice.DevicePath = deviceInterfaceDetailData.DevicePath;
+                return deviceInterfaceDetailData.DevicePath;
             }
             else
             {
                 this.TraceError("SetupDiGetDeviceInterfaceDetail");
+                return null;
             }
-
-            return success;
         }
 
         private String GetDeviceId()
@@ -186,7 +190,7 @@
             return deviceId;
         }
 
-        private void GetProperties()
+        private UsbDeviceProperty[] GetProperties()
         {
             UInt32 propertyKeyCount;
             Boolean success = UsbDeviceWinApi.SetupDiGetDevicePropertyKeys(this.handle, ref this.devInfoData, IntPtr.Zero, 0, out propertyKeyCount, 0);
@@ -194,13 +198,15 @@
             if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
             {
                 this.TraceError("SetupDiGetDevicePropertyKeys");
-                return;
+                return new UsbDeviceProperty[0];
             }
 
             if (0 == propertyKeyCount)
             {
-                throw new Exception(); // TODO
+                return new UsbDeviceProperty[0];
             }
+
+            List<UsbDeviceProperty> properties = new List<UsbDeviceProperty>();
 
             UsbDeviceWinApi.DEVPROPKEY[] propertyKeyArray = new UsbDeviceWinApi.DEVPROPKEY[propertyKeyCount];
             GCHandle propertyKeyArrayPinned = GCHandle.Alloc(propertyKeyArray , GCHandleType.Pinned);
@@ -235,7 +241,7 @@
                         if (success)
                         {
                             Object value = this.MarshalDeviceProperty(buffer, (Int32)requiredSize, propertyType);
-                            this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], value, propertyType));
+                            properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], value, propertyType));
                         }
                         else
                         {
@@ -247,7 +253,7 @@
 
                     if (!success) // don't combine with previous "if", covers 2 cases
                     {
-                        this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DEVPROP_TYPE_EMPTY));
+                        properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DEVPROP_TYPE_EMPTY));
                     }
                 }
             }
@@ -257,6 +263,8 @@
             }
 
             propertyKeyArrayPinned.Free();
+
+            return properties.ToArray();
         }
 
         private Object MarshalDeviceProperty(IntPtr source, Int32 length, UInt32 type)
@@ -287,8 +295,10 @@
             }
         }
 
-        private void GetRegistryProperties()
+        private UsbDeviceRegistryProperty[] GetRegistryProperties()
         {
+            List<UsbDeviceRegistryProperty> registryProperties = new List<UsbDeviceRegistryProperty>();
+
             for (UInt32 property = 0; property < UsbDeviceWinApi.SPDRP_MAXIMUM_PROPERTY; property++)
             {
                 UInt32 regtype;
@@ -314,17 +324,19 @@
                     if (success)
                     {
                         String value = Marshal.PtrToStringAuto(buffer);
-                        this.UsbDevice.RegistryProperties.Add(new UsbDeviceRegistryProperty(property, value, regtype));
+                        registryProperties.Add(new UsbDeviceRegistryProperty(property, value, regtype));
                     }
                     else
                     {
-                        this.UsbDevice.RegistryProperties.Add(new UsbDeviceRegistryProperty(property, null, UsbDeviceWinApi.REG_NONE));
                         this.TraceError("SetupDiGetDeviceRegistryProperty");
+                        registryProperties.Add(new UsbDeviceRegistryProperty(property, null, UsbDeviceWinApi.REG_NONE));
                     }
 
                     Marshal.FreeHGlobal(buffer);
                 }
             }
+
+            return registryProperties.ToArray();
         }
 
         private String ExtractStringAfterPrefix(String text, String prefix, Int32 length)

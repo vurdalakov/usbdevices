@@ -5,32 +5,30 @@
 
     public class UsbDevice
     {
-        public String Vid { get; set; }
-        public String Pid { get; set; }
+        public String Vid { get; internal set; }
+        public String Pid { get; internal set; }
 
-        public String Hub { get; set; }
-        public String Port { get; set; }
+        public String Hub { get; internal set; }
+        public String Port { get; internal set; }
 
-        public String DevicePath { get; set; }
-        public String DeviceId { get; set; }
+        public String DevicePath { get; internal set; }
+        public String DeviceId { get; internal set; }
 
-        public String[] InterfaceIds { get; set; }
+        public String[] InterfaceIds { get; internal set; }
 
-        public String BusReportedDeviceDescription { get; set; }
+        public String BusReportedDeviceDescription { get; internal set; }
 
-        public List<UsbDeviceProperty> Properties { get; private set; }
+        public UsbDeviceProperty[] Properties { get; internal set; }
 
-        public List<UsbDeviceRegistryProperty> RegistryProperties { get; private set; }
+        public UsbDeviceRegistryProperty[] RegistryProperties { get; internal set; }
 
-        public UsbDevice()
+        internal UsbDevice()
         {
-            this.Properties = new List<UsbDeviceProperty>();
-            this.RegistryProperties = new List<UsbDeviceRegistryProperty>();
         }
 
         public UsbDeviceProperty GetProperty(UsbDeviceWinApi.DEVPROPKEY devPropKey)
         {
-            for (Int32 i = 0; i < this.Properties.Count; i++)
+            for (Int32 i = 0; i < this.Properties.Length; i++)
             {
                 if (this.Properties[i].HasSameKey(devPropKey))
                 {
@@ -49,7 +47,7 @@
 
         public UsbDeviceRegistryProperty GetRegistryProperty(UInt32 key)
         {
-            for (Int32 i = 0; i < this.RegistryProperties.Count; i++)
+            for (Int32 i = 0; i < this.RegistryProperties.Length; i++)
             {
                 if (this.RegistryProperties[i].HasSameKey(key))
                 {
