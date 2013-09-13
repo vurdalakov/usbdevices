@@ -18,11 +18,27 @@
 
         public String BusReportedDeviceDescription { get; set; }
 
+        public List<UsbDeviceProperty> Properties { get; private set; }
+
         public Dictionary<UInt32, String> RegistryProperties { get; private set; }
 
         public UsbDevice()
         {
             this.RegistryProperties = new Dictionary<UInt32, String>();
+            this.Properties = new List<UsbDeviceProperty>();
+        }
+
+        public UsbDeviceProperty GetProperty(UsbDeviceWinApi.DEVPROPKEY devPropKey)
+        {
+            for (Int32 i = 0; i < this.Properties.Count; i++)
+            {
+                if (this.Properties[i].HasSameKey(devPropKey))
+                {
+                    return this.Properties[i];
+                }
+            }
+
+            return null;
         }
 
         public static UsbDevice[] GetDevices()

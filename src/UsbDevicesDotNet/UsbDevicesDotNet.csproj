@@ -39,6 +39,7 @@
     <Compile Include="UsbDeviceBase.cs" />
     <Compile Include="UsbDeviceGuids.cs" />
     <Compile Include="UsbDeviceInterface.cs" />
+    <Compile Include="UsbDeviceProperty.cs" />
     <Compile Include="UsbDevices.cs" />
     <Compile Include="UsbDeviceWinApi.cs" />
   </ItemGroup>

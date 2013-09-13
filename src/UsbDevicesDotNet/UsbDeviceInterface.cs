@@ -37,7 +37,8 @@
             this.UsbDevice.Vid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "VID_", 4).ToUpper();
             this.UsbDevice.Pid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "PID_", 4).ToUpper();
 
-            this.UsbDevice.BusReportedDeviceDescription = this.ReadBusReportedDeviceDescription(); // TODO: unify
+            this.GetProperties();
+            this.UsbDevice.BusReportedDeviceDescription = this.ReadBusReportedDeviceDescription();
 
             this.GetRegistryProperties();
             this.GetHubAndPort();
@@ -180,6 +181,98 @@
             return deviceId;
         }
 
+        private void GetProperties()
+        {
+            UInt32 propertyKeyCount;
+            Boolean success = UsbDeviceWinApi.SetupDiGetDevicePropertyKeys(this.handle, ref this.devInfoData, IntPtr.Zero, 0, out propertyKeyCount, 0);
+
+            if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
+            {
+                this.TraceError("SetupDiGetDevicePropertyKeys");
+                return;
+            }
+
+            if (0 == propertyKeyCount)
+            {
+                throw new Exception(); // TODO
+            }
+
+            UsbDeviceWinApi.DEVPROPKEY[] propertyKeyArray = new UsbDeviceWinApi.DEVPROPKEY[propertyKeyCount];
+            GCHandle propertyKeyArrayPinned = GCHandle.Alloc(propertyKeyArray , GCHandleType.Pinned);
+
+            IntPtr buffer = propertyKeyArrayPinned.AddrOfPinnedObject();
+
+            success = UsbDeviceWinApi.SetupDiGetDevicePropertyKeys(this.handle, ref this.devInfoData, buffer, propertyKeyCount, out propertyKeyCount, 0);
+
+            if (success)
+            {
+                for (UInt32 propertyKeyIndex = 0; propertyKeyIndex < propertyKeyCount; propertyKeyIndex++)
+                {
+                    UInt32 propertyType;
+
+                    UInt32 bufferSize = 512; // TODO: get size first
+                    buffer = Marshal.AllocHGlobal((Int32)bufferSize);
+
+                    UInt32 requiredSize;
+
+                    success = UsbDeviceWinApi.SetupDiGetDevicePropertyW(this.handle, ref this.devInfoData,
+                        ref propertyKeyArray[propertyKeyIndex], out propertyType, buffer, bufferSize, out requiredSize, 0);
+
+                    if (success)
+                    {
+                        Object value = this.MarshalDeviceProperty(buffer, requiredSize, propertyType); // TODO change requiredSize to bufferSize
+                        this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], value, propertyType));
+                    }
+                    else
+                    {
+                        this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DEVPROP_TYPE_EMPTY));
+                        this.TraceError("SetupDiGetDeviceRegistryProperty");
+                    }
+
+                    Marshal.FreeHGlobal(buffer);
+                }
+            }
+            else
+            {
+                this.TraceError("SetupDiGetDevicePropertyKeys");
+            }
+
+            propertyKeyArrayPinned.Free();
+        }
+
+        private Object MarshalDeviceProperty(IntPtr buffer, UInt32 bufferSize, UInt32 propertyType)
+        {
+            // Covers all types mentioned in devpkey.h
+            // TODO: add other types
+            switch (propertyType)
+            {
+                case UsbDeviceWinApi.DEVPROP_TYPE_UINT32:
+                    return (UInt32)Marshal.ReadInt32(buffer);
+                case UsbDeviceWinApi.DEVPROP_TYPE_GUID:
+                    Byte[] byteArray = new Byte[bufferSize];
+                    Marshal.Copy(buffer, byteArray, 0, (Int32)bufferSize);
+                    return new Guid(byteArray);
+                case UsbDeviceWinApi.DEVPROP_TYPE_FILETIME:
+                    return null; // TODO
+                case UsbDeviceWinApi.DEVPROP_TYPE_BOOLEAN:
+                    return Marshal.ReadByte(buffer) != 0;
+                case UsbDeviceWinApi.DEVPROP_TYPE_STRING:
+                    return Marshal.PtrToStringAuto(buffer);
+                case UsbDeviceWinApi.DEVPROP_TYPE_SECURITY_DESCRIPTOR:
+                    return null; // TODO
+                case UsbDeviceWinApi.DEVPROP_TYPE_SECURITY_DESCRIPTOR_STRING:
+                    return null; // TODO
+                case UsbDeviceWinApi.DEVPROP_TYPE_BINARY:
+                    byteArray = new Byte[bufferSize];
+                    Marshal.Copy(buffer, byteArray, 0, (Int32)bufferSize);
+                    return byteArray;
+                case UsbDeviceWinApi.DEVPROP_TYPE_STRING_LIST:
+                    return Marshal.PtrToStringAuto(buffer); // TODO
+                default:
+                    return null;
+            }
+        }
+
         private void GetRegistryProperties()
         {
             for (UInt32 property = 0; property < UsbDeviceWinApi.SpDrpMaximumProperty; property++)
@@ -215,38 +308,17 @@
             this.UsbDevice.Port = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Port_#", 4);
         }
 
-        private String ReadBusReportedDeviceDescription()
-        {
-            UsbDeviceWinApi.DEVPROPKEY devpropkey = new UsbDeviceWinApi.DEVPROPKEY();
-            devpropkey.Fmtid = new Guid(0x540b947e, 0x8b40, 0x45bc, 0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2);
-            devpropkey.Pid = 4;
-
-            UInt32 proptype;
-            
-            UInt32 bufferSize = 512;
-            IntPtr buffer = Marshal.AllocHGlobal((Int32)bufferSize);
-
-            UInt32 outsize;
-
-            Boolean success = UsbDeviceWinApi.SetupDiGetDevicePropertyW(this.handle, ref this.devInfoData,
-                ref devpropkey, out proptype, buffer, bufferSize, out outsize, 0);
-
-            if (!success)
-            {
-                this.TraceError("SetupDiGetDevicePropertyW");
-            }
-
-            String value = success ? Marshal.PtrToStringAuto(buffer) : null;
-
-            Marshal.FreeHGlobal(buffer);
-
-            return value;
-        }
-
         private String ExtractStringAfterPrefix(String text, String prefix, Int32 length)
         {
             Int32 index = text.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
             return index >= 0 ? text.Substring(index + prefix.Length, length) : "";
+        }
+
+        private String ReadBusReportedDeviceDescription()
+        {
+            UsbDeviceProperty usbDeviceProperty = this.UsbDevice.GetProperty(UsbDeviceWinApi.DEVPKEY_Device_BusReportedDeviceDesc);
+
+            return null == usbDeviceProperty ? null : usbDeviceProperty.Value as String;
         }
     }
 }
