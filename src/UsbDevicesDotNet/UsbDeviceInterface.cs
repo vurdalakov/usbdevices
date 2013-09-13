@@ -56,26 +56,41 @@
 
         private String GetDeviceInterfaceDetail()
         {
-            UsbDeviceWinApi.SP_DEVICE_INTERFACE_DETAIL_DATA deviceInterfaceDetailData = new UsbDeviceWinApi.SP_DEVICE_INTERFACE_DETAIL_DATA();
-            deviceInterfaceDetailData.Size = (UInt32)(8 == IntPtr.Size ? 8 : 6);
-
-            UInt32 requiredSize = 0;
+            UInt32 requiredSize;
 
             this.devInfoData = new UsbDeviceWinApi.SP_DEVINFO_DATA();
             this.devInfoData.Size = (UInt32)Marshal.SizeOf(devInfoData);
 
             Boolean success = UsbDeviceWinApi.SetupDiGetDeviceInterfaceDetail(this.handle, ref this.deviceInterfaceData,
-                ref deviceInterfaceDetailData, deviceInterfaceDetailData.Size, out requiredSize, ref this.devInfoData);
+                IntPtr.Zero, 0, out requiredSize, ref this.devInfoData);
 
-            if (success)
-            {
-                return deviceInterfaceDetailData.DevicePath;
-            }
-            else
+            if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
             {
                 this.TraceError("SetupDiGetDeviceInterfaceDetail");
                 return null;
             }
+
+            IntPtr buffer = Marshal.AllocHGlobal((Int32)requiredSize);
+            Marshal.WriteInt32(buffer, 8 == IntPtr.Size ? 8 : 6);
+
+            success = UsbDeviceWinApi.SetupDiGetDeviceInterfaceDetail(this.handle, ref this.deviceInterfaceData,
+                buffer, requiredSize, out requiredSize, ref this.devInfoData);
+
+            String devicePath = null;
+
+            if (success)
+            {
+                IntPtr stringBuffer = new IntPtr(buffer.ToInt64() + 4);
+                devicePath = Marshal.PtrToStringAuto(stringBuffer);
+            }
+            else
+            {
+                this.TraceError("SetupDiGetDeviceInterfaceDetail");
+            }
+
+            Marshal.FreeHGlobal(buffer);
+
+            return devicePath;
         }
 
         private String GetDeviceId()
@@ -220,7 +235,6 @@
                 for (UInt32 propertyKeyIndex = 0; propertyKeyIndex < propertyKeyCount; propertyKeyIndex++)
                 {
                     UInt32 propertyType;
-
                     UInt32 requiredSize;
 
                     success = UsbDeviceWinApi.SetupDiGetDevicePropertyW(this.handle, ref this.devInfoData,
