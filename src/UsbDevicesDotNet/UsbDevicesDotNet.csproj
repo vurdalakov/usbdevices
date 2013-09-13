@@ -39,7 +39,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UsbDevice.cs" />
     <Compile Include="UsbDeviceBase.cs" />
-    <Compile Include="UsbDeviceGuids.cs" />
     <Compile Include="UsbDeviceInterface.cs" />
     <Compile Include="UsbDeviceProperty.cs" />
     <Compile Include="UsbDevices.cs" />

@@ -66,7 +66,7 @@
 
         public static UsbDevice[] GetDevices()
         {
-            return UsbDevice.GetDevices(new Guid(UsbDeviceGuids.GUID_DEVINTERFACE_USB_DEVICE));
+            return UsbDevice.GetDevices(new Guid(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE));
         }
 
         public static UsbDevice[] GetDevices(Guid classGuid)
