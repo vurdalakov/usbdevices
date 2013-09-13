@@ -22,7 +22,11 @@
                 }
 
                 Console.WriteLine("LocationInformation = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION));
-                Console.WriteLine("LocationPaths = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_PATHS));
+
+                foreach (String locationPath in usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_PATHS) as String[])
+                {
+                    Console.WriteLine("LocationPaths = {0}", locationPath);
+                }
 
                 if (!String.IsNullOrEmpty(usbDevice.BusReportedDeviceDescription))
                 {

@@ -315,11 +315,11 @@
 
             for (UInt32 property = 0; property < UsbDeviceWinApi.SPDRP_MAXIMUM_PROPERTY; property++)
             {
-                UInt32 regtype;
+                UInt32 propertyType;
                 UInt32 requiredSize;
 
                 Boolean success = UsbDeviceWinApi.SetupDiGetDeviceRegistryProperty(this.handle, ref this.devInfoData,
-                    property, out regtype, IntPtr.Zero, 0, out requiredSize);
+                    property, out propertyType, IntPtr.Zero, 0, out requiredSize);
 
                 if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
                 {
@@ -333,12 +333,12 @@
                     IntPtr buffer = Marshal.AllocHGlobal((Int32)requiredSize);
 
                     success = UsbDeviceWinApi.SetupDiGetDeviceRegistryProperty(this.handle, ref this.devInfoData,
-                        property, out regtype, buffer, requiredSize, out requiredSize);
+                        property, out propertyType, buffer, requiredSize, out requiredSize);
 
                     if (success)
                     {
-                        String value = Marshal.PtrToStringAuto(buffer);
-                        registryProperties.Add(new UsbDeviceRegistryProperty(property, value, regtype));
+                        Object value = this.MarshalDeviceRegistryProperty(buffer, (Int32)requiredSize, propertyType);
+                        registryProperties.Add(new UsbDeviceRegistryProperty(property, value, propertyType));
                     }
                     else
                     {
@@ -351,6 +351,40 @@
             }
 
             return registryProperties.ToArray();
+        }
+
+        private Object MarshalDeviceRegistryProperty(IntPtr source, Int32 length, UInt32 type)
+        {
+            switch (type)
+            {
+                case UsbDeviceWinApi.REG_NONE:
+                    return null;
+                case UsbDeviceWinApi.REG_SZ:
+                case UsbDeviceWinApi.REG_EXPAND_SZ:
+                    return Marshal.PtrToStringAuto(source);
+                case UsbDeviceWinApi.REG_BINARY:
+                    return MarshalEx.ReadByteArray(source, length);
+                case UsbDeviceWinApi.REG_DWORD:
+              //case UsbDeviceWinApi.REG_DWORD_LITTLE_ENDIAN:
+                    return (UInt32)Marshal.ReadInt32(source);
+                case UsbDeviceWinApi.REG_DWORD_BIG_ENDIAN:
+                    return Endianness.Swap((UInt32)Marshal.ReadInt32(source));
+                case UsbDeviceWinApi.REG_LINK:
+                    return Marshal.PtrToStringUni(source);
+                case UsbDeviceWinApi.REG_MULTI_SZ:
+                    return MarshalEx.ReadMultiSzStringList(source, length);
+                case UsbDeviceWinApi.REG_RESOURCE_LIST:
+                    return null; // TODO
+                case UsbDeviceWinApi.REG_FULL_RESOURCE_DESCRIPTOR:
+                    return null; // TODO
+                case UsbDeviceWinApi.REG_RESOURCE_REQUIREMENTS_LIST:
+                    return null; // TODO
+                case UsbDeviceWinApi.REG_QWORD:
+              //case UsbDeviceWinApi.REG_QWORD_LITTLE_ENDIAN:
+                    return (UInt64)Marshal.ReadInt64(source);
+                default:
+                    return null;
+            }
         }
 
         private String ExtractStringAfterPrefix(String text, String prefix, Int32 length)
