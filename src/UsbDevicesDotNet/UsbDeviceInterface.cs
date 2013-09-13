@@ -211,26 +211,40 @@
                 {
                     UInt32 propertyType;
 
-                    UInt32 bufferSize = 512; // TODO: get size first
-                    buffer = Marshal.AllocHGlobal((Int32)bufferSize);
-
                     UInt32 requiredSize;
 
                     success = UsbDeviceWinApi.SetupDiGetDevicePropertyW(this.handle, ref this.devInfoData,
-                        ref propertyKeyArray[propertyKeyIndex], out propertyType, buffer, bufferSize, out requiredSize, 0);
+                        ref propertyKeyArray[propertyKeyIndex], out propertyType, IntPtr.Zero, 0, out requiredSize, 0);
 
-                    if (success)
+                    if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
                     {
-                        Object value = this.MarshalDeviceProperty(buffer, (Int32)requiredSize, propertyType); // TODO change requiredSize to bufferSize
-                        this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], value, propertyType));
+                        this.TraceError("SetupDiGetDeviceProperty");
+                        success = false;
                     }
                     else
                     {
-                        this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DEVPROP_TYPE_EMPTY));
-                        this.TraceError("SetupDiGetDeviceRegistryProperty");
+                        buffer = Marshal.AllocHGlobal((Int32)requiredSize);
+
+                        success = UsbDeviceWinApi.SetupDiGetDevicePropertyW(this.handle, ref this.devInfoData,
+                            ref propertyKeyArray[propertyKeyIndex], out propertyType, buffer, requiredSize, out requiredSize, 0);
+
+                        if (success)
+                        {
+                            Object value = this.MarshalDeviceProperty(buffer, (Int32)requiredSize, propertyType);
+                            this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], value, propertyType));
+                        }
+                        else
+                        {
+                            this.TraceError("SetupDiGetDevicePropertyW");
+                        }
+
+                        Marshal.FreeHGlobal(buffer);
                     }
 
-                    Marshal.FreeHGlobal(buffer);
+                    if (!success) // don't combine with previous "if", covers 2 cases
+                    {
+                        this.UsbDevice.Properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DEVPROP_TYPE_EMPTY));
+                    }
                 }
             }
             else
