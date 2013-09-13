@@ -204,5 +204,25 @@
         public static DEVPROPKEY DEVPKEY_Device_BusReportedDeviceDesc = new DEVPROPKEY() { Fmtid = new Guid(0x540b947e, 0x8b40, 0x45bc, 0xa8, 0xa2, 0x6a, 0x0b, 0x89, 0x4c, 0xbd, 0xa2), Pid = 4 };
 
         #endregion
+
+        #region winnt.h
+
+        public const Int32 REG_NONE                       = 0;   // No value type
+        public const Int32 REG_SZ                         = 1;   // Unicode nul terminated string
+        public const Int32 REG_EXPAND_SZ                  = 2;   // Unicode nul terminated string
+                                                                 // (with environment variable references)
+        public const Int32 REG_BINARY                     = 3;   // Free form binary
+        public const Int32 REG_DWORD                      = 4;   // 32-bit number
+        public const Int32 REG_DWORD_LITTLE_ENDIAN        = 4;   // 32-bit number (same as REG_DWORD)
+        public const Int32 REG_DWORD_BIG_ENDIAN           = 5;   // 32-bit number
+        public const Int32 REG_LINK                       = 6;   // Symbolic Link (unicode)
+        public const Int32 REG_MULTI_SZ                   = 7;   // Multiple Unicode strings
+        public const Int32 REG_RESOURCE_LIST              = 8;   // Resource list in the resource map
+        public const Int32 REG_FULL_RESOURCE_DESCRIPTOR   = 9;   // Resource list in the hardware description
+        public const Int32 REG_RESOURCE_REQUIREMENTS_LIST = 10;
+        public const Int32 REG_QWORD                      = 11;  // 64-bit number
+        public const Int32 REG_QWORD_LITTLE_ENDIAN        = 11;  // 64-bit number (same as REG_QWORD)
+
+        #endregion
     }
 }

@@ -39,10 +39,14 @@
             this.UsbDevice.Pid = this.ExtractStringAfterPrefix(this.UsbDevice.DeviceId, "PID_", 4).ToUpper();
 
             this.GetProperties();
-            this.UsbDevice.BusReportedDeviceDescription = this.ReadBusReportedDeviceDescription();
+
+            this.UsbDevice.BusReportedDeviceDescription = this.UsbDevice.GetPropertyValue(UsbDeviceWinApi.DEVPKEY_Device_BusReportedDeviceDesc) as String;
 
             this.GetRegistryProperties();
-            this.GetHubAndPort();
+
+            String hubAndPort = this.UsbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION) as String;
+            this.UsbDevice.Hub = this.ExtractStringAfterPrefix(hubAndPort, "Hub_#", 4);
+            this.UsbDevice.Port = this.ExtractStringAfterPrefix(hubAndPort, "Port_#", 4);
         }
 
         private Boolean GetDeviceInterfaceDetail()
@@ -295,7 +299,6 @@
 
                 if (success || (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INSUFFICIENT_BUFFER))
                 {
-                    this.UsbDevice.RegistryProperties.Add(property, null);
                     if (Marshal.GetLastWin32Error() != UsbDeviceWinApi.ERROR_INVALID_DATA)
                     {
                         this.TraceError("SetupDiGetDeviceRegistryProperty");
@@ -311,11 +314,11 @@
                     if (success)
                     {
                         String value = Marshal.PtrToStringAuto(buffer);
-                        this.UsbDevice.RegistryProperties.Add(property, value);
+                        this.UsbDevice.RegistryProperties.Add(new UsbDeviceRegistryProperty(property, value, regtype));
                     }
                     else
                     {
-                        this.UsbDevice.RegistryProperties.Add(property, null);
+                        this.UsbDevice.RegistryProperties.Add(new UsbDeviceRegistryProperty(property, null, UsbDeviceWinApi.REG_NONE));
                         this.TraceError("SetupDiGetDeviceRegistryProperty");
                     }
 
@@ -324,25 +327,15 @@
             }
         }
 
-        private void GetHubAndPort()
-        {
-            String value = this.UsbDevice.RegistryProperties[UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION];
-
-            this.UsbDevice.Hub = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Hub_#", 4);
-            this.UsbDevice.Port = String.IsNullOrEmpty(value) ? null : ExtractStringAfterPrefix(value, "Port_#", 4);
-        }
-
         private String ExtractStringAfterPrefix(String text, String prefix, Int32 length)
         {
+            if (String.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
             Int32 index = text.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
-            return index >= 0 ? text.Substring(index + prefix.Length, length) : "";
-        }
-
-        private String ReadBusReportedDeviceDescription()
-        {
-            UsbDeviceProperty usbDeviceProperty = this.UsbDevice.GetProperty(UsbDeviceWinApi.DEVPKEY_Device_BusReportedDeviceDesc);
-
-            return null == usbDeviceProperty ? null : usbDeviceProperty.Value as String;
+            return index >= 0 ? text.Substring(index + prefix.Length, length) : null;
         }
     }
 }

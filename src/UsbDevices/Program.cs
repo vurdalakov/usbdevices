@@ -21,8 +21,8 @@
                     Console.WriteLine("Interface ID  = {0}", interfaceId);
                 }
 
-                Console.WriteLine("LocationInformation = {0}", usbDevice.RegistryProperties[UsbDeviceWinApi.SpDrpLocationInformation]);
-                Console.WriteLine("LocationPaths = {0}", usbDevice.RegistryProperties[UsbDeviceWinApi.SpDrpLocationPaths]);
+                Console.WriteLine("LocationInformation = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION));
+                Console.WriteLine("LocationPaths = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_PATHS));
 
                 if (!String.IsNullOrEmpty(usbDevice.BusReportedDeviceDescription))
                 {

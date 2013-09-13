@@ -20,12 +20,12 @@
 
         public List<UsbDeviceProperty> Properties { get; private set; }
 
-        public Dictionary<UInt32, String> RegistryProperties { get; private set; }
+        public List<UsbDeviceRegistryProperty> RegistryProperties { get; private set; }
 
         public UsbDevice()
         {
-            this.RegistryProperties = new Dictionary<UInt32, String>();
             this.Properties = new List<UsbDeviceProperty>();
+            this.RegistryProperties = new List<UsbDeviceRegistryProperty>();
         }
 
         public UsbDeviceProperty GetProperty(UsbDeviceWinApi.DEVPROPKEY devPropKey)
@@ -39,6 +39,31 @@
             }
 
             return null;
+        }
+
+        public Object GetPropertyValue(UsbDeviceWinApi.DEVPROPKEY devPropKey)
+        {
+            UsbDeviceProperty usbDeviceProperty = this.GetProperty(devPropKey);
+            return null == usbDeviceProperty ? null : usbDeviceProperty.Value;
+        }
+
+        public UsbDeviceRegistryProperty GetRegistryProperty(UInt32 key)
+        {
+            for (Int32 i = 0; i < this.RegistryProperties.Count; i++)
+            {
+                if (this.RegistryProperties[i].HasSameKey(key))
+                {
+                    return this.RegistryProperties[i];
+                }
+            }
+
+            return null;
+        }
+
+        public Object GetRegistryPropertyValue(UInt32 key)
+        {
+            UsbDeviceRegistryProperty usbDeviceRegistryProperty = this.GetRegistryProperty(key);
+            return null == usbDeviceRegistryProperty ? null : usbDeviceRegistryProperty.Value;
         }
 
         public static UsbDevice[] GetDevices()
