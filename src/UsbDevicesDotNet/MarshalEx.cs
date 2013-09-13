@@ -57,7 +57,7 @@
         public static RawSecurityDescriptor ReadSecurityDescriptor(IntPtr source, Int32 length)
         {
             Byte[] byteArray = MarshalEx.ReadByteArray(source, 0, length);
-            return new RawSecurityDescriptor(byteArray, length);
+            return new RawSecurityDescriptor(byteArray, 0);
         }
     }
 }
