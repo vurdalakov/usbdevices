@@ -1,0 +1,62 @@
+﻿namespace UsbDevicesViewer
+{
+    using System;
+
+    using Vurdalakov;
+    using Vurdalakov.UsbDevicesDotNet;
+
+    public class UsbDeviceViewModel : ViewModelBase
+    {
+        public String Vid { get; private set; }
+        public String Pid { get; private set; }
+        public String HubAndPort { get; private set; }
+        public String DeviceId { get; private set; }
+        public String DevicePath { get; private set; }
+        public String Description { get; private set; }
+
+        public ThreadSafeObservableCollection<NameValueViewModel> Properties { get; private set; }
+
+        public ThreadSafeObservableCollection<NameValueViewModel> RegistryProperties { get; private set; }
+
+        public UsbDeviceViewModel(UsbDevice usbDevice)
+        {
+            this.Properties = new ThreadSafeObservableCollection<NameValueViewModel>();
+            this.RegistryProperties = new ThreadSafeObservableCollection<NameValueViewModel>();
+
+            this.Refresh(usbDevice);
+        }
+
+        public void Refresh(UsbDevice usbDevice)
+        {
+            this.Vid = usbDevice.Vid;
+            this.OnPropertyChanged(() => this.Vid);
+
+            this.Pid = usbDevice.Pid;
+            this.OnPropertyChanged(() => this.Pid);
+
+            this.HubAndPort = String.Format("{0}:{1}", usbDevice.Hub, usbDevice.Port);
+            this.OnPropertyChanged(() => this.HubAndPort);
+
+            this.DeviceId = usbDevice.DeviceId;
+            this.OnPropertyChanged(() => this.DeviceId);
+
+            this.DevicePath = usbDevice.DevicePath;
+            this.OnPropertyChanged(() => this.DevicePath);
+
+            this.Description = usbDevice.BusReportedDeviceDescription;
+            this.OnPropertyChanged(() => this.Description);
+
+            this.Properties.Clear();
+            foreach (UsbDeviceProperty usbDeviceProperty in usbDevice.Properties)
+            {
+                this.Properties.Add(new NameValueViewModel(usbDeviceProperty.Key.ToString(), usbDeviceProperty.Value as String));
+            }
+
+            this.RegistryProperties.Clear();
+            foreach (UsbDeviceRegistryProperty usbDeviceRegistryProperty in usbDevice.RegistryProperties)
+            {
+                this.RegistryProperties.Add(new NameValueViewModel(usbDeviceRegistryProperty.GetDescription(), usbDeviceRegistryProperty.FormatValue()));
+            }
+        }
+    }
+}
