@@ -38,8 +38,8 @@
             usbDevice.DeviceId = this.GetDeviceId();
             usbDevice.InterfaceIds = this.GetInterfaceIds(this.devInfoData.DevInst, usbDevice.DeviceId);
 
-            usbDevice.Vid = this.ExtractStringAfterPrefix(usbDevice.DeviceId, "VID_", 4).ToUpper();
-            usbDevice.Pid = this.ExtractStringAfterPrefix(usbDevice.DeviceId, "PID_", 4).ToUpper();
+            usbDevice.Vid = this.ExtractStringAfterPrefix(usbDevice.DeviceId, "VID_", 4);
+            usbDevice.Pid = this.ExtractStringAfterPrefix(usbDevice.DeviceId, "PID_", 4);
 
             usbDevice.Properties = this.GetProperties();
 
@@ -395,7 +395,7 @@
             }
 
             Int32 index = text.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
-            return index >= 0 ? text.Substring(index + prefix.Length, length) : null;
+            return index >= 0 ? text.Substring(index + prefix.Length, length).ToUpper() : null;
         }
     }
 }
