@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbDevicesDotNet", "UsbDevi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbDevicesViewer", "UsbDevicesViewer\UsbDevicesViewer.csproj", "{3D070B3B-4BC9-4F6A-B3F3-E611BB2E06DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "include2winapi", "include2winapi\include2winapi.csproj", "{76ED188F-7808-45ED-87BB-C20388A774B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{3D070B3B-4BC9-4F6A-B3F3-E611BB2E06DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D070B3B-4BC9-4F6A-B3F3-E611BB2E06DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D070B3B-4BC9-4F6A-B3F3-E611BB2E06DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76ED188F-7808-45ED-87BB-C20388A774B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76ED188F-7808-45ED-87BB-C20388A774B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76ED188F-7808-45ED-87BB-C20388A774B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76ED188F-7808-45ED-87BB-C20388A774B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
