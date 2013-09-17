@@ -1,6 +1,7 @@
 ﻿namespace Vurdalakov.UsbDevicesDotNet
 {
     using System;
+    using System.Text;
 
     public class UsbDeviceRegistryProperty
     {
@@ -97,9 +98,47 @@
             }
         }
 
-        public String FormatValue()
+        public String[] FormatValue()
         {
-            return this.Value as String;
+            switch (this.Type)
+            {
+                case UsbDeviceWinApi.REG_NONE:
+                    return this.MakeArray(String.Empty);
+                case UsbDeviceWinApi.REG_SZ:
+                case UsbDeviceWinApi.REG_LINK:
+                    return this.MakeArray(this.Value as String);
+                case UsbDeviceWinApi.REG_EXPAND_SZ:
+                    return this.MakeArray(Environment.ExpandEnvironmentVariables(this.Value as String));
+                case UsbDeviceWinApi.REG_BINARY:
+                    StringBuilder stringBuilder = new StringBuilder();
+                    foreach (Byte b in (Byte[])this.Value)
+                    {
+                        stringBuilder.AppendFormat("{0:X2},", b);
+                    }
+                    return this.MakeArray(stringBuilder.ToString());
+                case UsbDeviceWinApi.REG_DWORD:
+              //case UsbDeviceWinApi.REG_DWORD_LITTLE_ENDIAN:
+                case UsbDeviceWinApi.REG_DWORD_BIG_ENDIAN:
+                    return this.MakeArray(String.Format("0x{0:X8}", this.Value));
+                case UsbDeviceWinApi.REG_MULTI_SZ:
+                    return this.Value as String[];
+                case UsbDeviceWinApi.REG_RESOURCE_LIST:
+                    return null; // TODO
+                case UsbDeviceWinApi.REG_FULL_RESOURCE_DESCRIPTOR:
+                    return null; // TODO
+                case UsbDeviceWinApi.REG_RESOURCE_REQUIREMENTS_LIST:
+                    return null; // TODO
+                case UsbDeviceWinApi.REG_QWORD:
+              //case UsbDeviceWinApi.REG_QWORD_LITTLE_ENDIAN:
+                    return this.MakeArray(String.Format("0x{0:X16}", this.Value));
+                default:
+                    return null;
+            }
+        }
+
+        private String[] MakeArray(String value)
+        {
+            return new String[] { value };
         }
     }
 }
