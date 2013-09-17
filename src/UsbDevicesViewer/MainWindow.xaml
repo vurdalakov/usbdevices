@@ -5,13 +5,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0">
+        <!--DockPanel Grid.Row="0">
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
                     <Menu ToolBar.OverflowMode="Never">
@@ -21,9 +22,19 @@
                     </Menu>
                 </ToolBar>
             </ToolBarPanel>
+        </DockPanel-->
+
+        <DockPanel Grid.Row="1">
+            <ToolBarPanel DockPanel.Dock="Top">
+                <ToolBar ToolBarTray.IsLocked="True">
+                    <TextBlock Text="Show:" Margin="8,2,4,0" />
+                    <ComboBox ItemsSource="{Binding InterfaceTypes}" DisplayMemberPath="Name" SelectedItem="{Binding InterfaceType}" IsEditable="False" Width="150" Margin="0" />
+                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="8,0,4,0" />
+                </ToolBar>
+            </ToolBarPanel>
         </DockPanel>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False">
+        <ListView Grid.Row="2" ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False">
             <ListView.View>
                 <GridView AllowsColumnReorder="true">
                     <GridViewColumn Header="VID" Width="Auto">
@@ -72,9 +83,9 @@
             </ListView.View>
         </ListView>
 
-        <GridSplitter Grid.Row="2" ResizeBehavior="PreviousAndNext" Height="5" HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Row="3" ResizeBehavior="PreviousAndNext" Height="5" HorizontalAlignment="Stretch" />
 
-        <TabControl Grid.Row="3">
+        <TabControl Grid.Row="4">
             <TabItem Header="Properties">
                 <ListView ItemsSource="{Binding SelectedUsbDevice.Properties}" ScrollViewer.CanContentScroll="False">
                     <ListView.View>
@@ -121,7 +132,7 @@
             </TabItem>
         </TabControl>
 
-        <StatusBar Grid.Row="4" HorizontalAlignment="Stretch">
+        <StatusBar Grid.Row="5" HorizontalAlignment="Stretch">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock>

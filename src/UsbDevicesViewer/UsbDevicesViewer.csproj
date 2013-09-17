@@ -54,6 +54,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="UsbDeviceViewModel.cs" />
+    <Compile Include="Vurdalakov\CommandBase.cs" />
+    <Compile Include="Vurdalakov\CommandBaseGeneric.cs" />
     <Compile Include="Vurdalakov\NameValueViewModel.cs" />
     <Compile Include="Vurdalakov\ThreadSafeObservableCollection.cs" />
     <Compile Include="Vurdalakov\ViewModelBase.cs" />

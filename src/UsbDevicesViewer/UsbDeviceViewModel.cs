@@ -55,7 +55,7 @@
             this.RegistryProperties.Clear();
             foreach (UsbDeviceRegistryProperty usbDeviceRegistryProperty in usbDevice.RegistryProperties)
             {
-                String[] values = usbDeviceRegistryProperty.FormatValue();
+                String[] values = usbDeviceRegistryProperty.GetValue();
                 
                 this.RegistryProperties.Add(new NameValueViewModel(usbDeviceRegistryProperty.GetDescription(), values[0]));
 

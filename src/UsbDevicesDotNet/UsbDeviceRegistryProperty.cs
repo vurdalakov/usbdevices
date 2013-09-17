@@ -98,7 +98,7 @@
             }
         }
 
-        public String[] FormatValue()
+        public String[] GetValue()
         {
             switch (this.Type)
             {
@@ -121,18 +121,17 @@
                 case UsbDeviceWinApi.REG_DWORD_BIG_ENDIAN:
                     return this.MakeArray(String.Format("0x{0:X8}", this.Value));
                 case UsbDeviceWinApi.REG_MULTI_SZ:
-                    return this.Value as String[];
+                    String[] strings = this.Value as String[];
+                    return 0 == strings.Length ? this.MakeArray(String.Empty) : strings;
                 case UsbDeviceWinApi.REG_RESOURCE_LIST:
-                    return null; // TODO
                 case UsbDeviceWinApi.REG_FULL_RESOURCE_DESCRIPTOR:
-                    return null; // TODO
                 case UsbDeviceWinApi.REG_RESOURCE_REQUIREMENTS_LIST:
-                    return null; // TODO
+                    return this.MakeArray(String.Format("Unsupported property type: ", this.Type)); // TODO
                 case UsbDeviceWinApi.REG_QWORD:
               //case UsbDeviceWinApi.REG_QWORD_LITTLE_ENDIAN:
                     return this.MakeArray(String.Format("0x{0:X16}", this.Value));
                 default:
-                    return null;
+                    return this.MakeArray(String.Format("Unknown property type: ", this.Type));
             }
         }
 
