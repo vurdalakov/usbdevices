@@ -2,6 +2,7 @@
 {
     using System;
     using System.Text;
+    using System.Reflection;
 
     public class UsbDeviceProperty
     {
@@ -23,7 +24,16 @@
 
         public String GetDescription()
         {
-            return this.Key.ToString();
+            foreach (FieldInfo field in typeof(UsbDeviceWinApi.DevicePropertyKeys).GetFields(BindingFlags.Static | BindingFlags.Public))
+            {
+                UsbDeviceWinApi.DEVPROPKEY devPropKey = (UsbDeviceWinApi.DEVPROPKEY)field.GetValue(null);
+                if (this.HasSameKey(devPropKey))
+                {
+                    return field.Name;
+                }
+            }
+
+            return "Unknown key";
         }
 
         public String[] GetValues()

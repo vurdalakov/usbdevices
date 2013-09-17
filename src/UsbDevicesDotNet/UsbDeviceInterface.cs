@@ -43,7 +43,7 @@
 
             usbDevice.Properties = this.GetProperties();
 
-            usbDevice.BusReportedDeviceDescription = usbDevice.GetPropertyValue(UsbDeviceWinApi.DEVPKEY_Device_BusReportedDeviceDesc) as String;
+            usbDevice.BusReportedDeviceDescription = usbDevice.GetPropertyValue(UsbDeviceWinApi.DevicePropertyKeys.DEVPKEY_Device_BusReportedDeviceDesc) as String;
 
             usbDevice.RegistryProperties = this.GetRegistryProperties();
 
