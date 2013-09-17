@@ -49,7 +49,14 @@
             this.Properties.Clear();
             foreach (UsbDeviceProperty usbDeviceProperty in usbDevice.Properties)
             {
-                this.Properties.Add(new NameValueViewModel(usbDeviceProperty.Key.ToString(), usbDeviceProperty.Value as String));
+                String[] values = usbDeviceProperty.GetValues();
+
+                this.Properties.Add(new NameValueViewModel(usbDeviceProperty.GetDescription(), values[0]));
+
+                for (int i = 1; i < values.Length; i++)
+                {
+                    this.Properties.Add(new NameValueViewModel(String.Empty, values[i]));
+                }
             }
 
             this.RegistryProperties.Clear();
