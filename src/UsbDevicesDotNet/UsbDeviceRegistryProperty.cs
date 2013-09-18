@@ -73,6 +73,20 @@
             }
         }
 
+        public String GetType()
+        {
+            foreach (FieldInfo field in typeof(UsbDeviceWinApi.DeviceRegistryPropertyTypes).GetFields(BindingFlags.Static | BindingFlags.Public))
+            {
+                Int32 type = (Int32)field.GetValue(null);
+                if (this.Type == type)
+                {
+                    return field.Name;
+                }
+            }
+
+            return "Unknown key";
+        }
+
         private String[] MakeArray(String value)
         {
             return new String[] { value };

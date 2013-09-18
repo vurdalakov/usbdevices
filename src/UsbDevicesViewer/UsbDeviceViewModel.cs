@@ -16,12 +16,12 @@
 
         public ThreadSafeObservableCollection<NameValueTypeViewModel> Properties { get; private set; }
 
-        public ThreadSafeObservableCollection<NameValueViewModel> RegistryProperties { get; private set; }
+        public ThreadSafeObservableCollection<NameValueTypeViewModel> RegistryProperties { get; private set; }
 
         public UsbDeviceViewModel(UsbDevice usbDevice)
         {
             this.Properties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
-            this.RegistryProperties = new ThreadSafeObservableCollection<NameValueViewModel>();
+            this.RegistryProperties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
 
             this.Refresh(usbDevice);
         }
@@ -63,12 +63,12 @@
             foreach (UsbDeviceRegistryProperty usbDeviceRegistryProperty in usbDevice.RegistryProperties)
             {
                 String[] values = usbDeviceRegistryProperty.GetValue();
-                
-                this.RegistryProperties.Add(new NameValueViewModel(usbDeviceRegistryProperty.GetDescription(), values[0]));
+
+                this.RegistryProperties.Add(new NameValueTypeViewModel(usbDeviceRegistryProperty.GetDescription(), values[0], usbDeviceRegistryProperty.GetType()));
 
                 for (int i = 1; i < values.Length; i++)
                 {
-                    this.RegistryProperties.Add(new NameValueViewModel(String.Empty, values[i]));
+                    this.RegistryProperties.Add(new NameValueTypeViewModel(String.Empty, values[i], String.Empty));
                 }
             }
         }
