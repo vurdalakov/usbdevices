@@ -125,10 +125,10 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4
                     {
                         throw new Exception(String.Format("Line not handled:\n{0}", line));
                     }
-                    /*
-                                public static Int32 SPDRP_CLASSGUID = 0x00000008;
-                    */
-                    stringBuilder.AppendFormat("            public static UInt32 {0} = {1};", match.Groups[1].Value, match.Groups[2].Value);
+/*
+            public const Int32 SPDRP_CLASSGUID = 0x00000008;
+*/
+                    stringBuilder.AppendFormat("            public const UInt32 {0} = {1};", match.Groups[1].Value, match.Groups[2].Value);
                     stringBuilder.AppendLine();
                 }
             }
@@ -193,7 +193,7 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4
 /*
         public const UInt32 DEVPROP_TYPE_UINT32                     = 0x00000007;  // 32-bit unsigned int (ULONG)
 */
-                    stringBuilder.AppendFormat("            public static UInt32 {0} = {1};", match.Groups[1].Value, match.Groups[2].Value);
+                    stringBuilder.AppendFormat("            public const UInt32 {0} = {1};", match.Groups[1].Value, match.Groups[2].Value);
                     stringBuilder.AppendLine();
                 }
             }
