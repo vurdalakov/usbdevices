@@ -267,7 +267,7 @@
 
                     if (!success) // don't combine with previous "if", covers 2 cases
                     {
-                        properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DEVPROP_TYPE_EMPTY));
+                        properties.Add(new UsbDeviceProperty(propertyKeyArray[propertyKeyIndex], null, UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_EMPTY));
                     }
                 }
             }
@@ -286,23 +286,23 @@
             // TODO: add other types; now covers only all types that are mentioned in devpkey.h
             switch (type)
             {
-                case UsbDeviceWinApi.DEVPROP_TYPE_UINT32:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_UINT32:
                     return (UInt32)Marshal.ReadInt32(source);
-                case UsbDeviceWinApi.DEVPROP_TYPE_GUID:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_GUID:
                     return MarshalEx.ReadGuid(source, length);
-                case UsbDeviceWinApi.DEVPROP_TYPE_FILETIME:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_FILETIME:
                     return MarshalEx.ReadFileTime(source);
-                case UsbDeviceWinApi.DEVPROP_TYPE_BOOLEAN:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_BOOLEAN:
                     return Marshal.ReadByte(source) != 0;
-                case UsbDeviceWinApi.DEVPROP_TYPE_STRING:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_STRING:
                     return Marshal.PtrToStringUni(source);
-                case UsbDeviceWinApi.DEVPROP_TYPE_SECURITY_DESCRIPTOR:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_SECURITY_DESCRIPTOR:
                     return MarshalEx.ReadSecurityDescriptor(source, length);
-                case UsbDeviceWinApi.DEVPROP_TYPE_SECURITY_DESCRIPTOR_STRING:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_SECURITY_DESCRIPTOR_STRING:
                     return Marshal.PtrToStringUni(source);
-                case UsbDeviceWinApi.DEVPROP_TYPE_BINARY:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_BINARY:
                     return MarshalEx.ReadByteArray(source, length);
-                case UsbDeviceWinApi.DEVPROP_TYPE_STRING_LIST:
+                case UsbDeviceWinApi.DevicePropertyTypes.DEVPROP_TYPE_STRING_LIST:
                     return MarshalEx.ReadMultiSzStringList(source, length);
                 default:
                     return null;

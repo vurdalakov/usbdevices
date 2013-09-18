@@ -20,6 +20,7 @@
 
             Program.ParseDevpkeyH(directoryName);
             Program.ParseSetupapiH(directoryName);
+            Program.ParseDevpropdefH(directoryName);
         }
 
         private static void ParseDevpkeyH(String directoryName)
@@ -58,7 +59,7 @@
 /*
 DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4efd, 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0, 2);     // DEVPROP_TYPE_STRING
 */
-                    Match match = Regex.Match(line, @"DEFINE_DEVPROPKEY\(([a-zA-Z0-9_]+),\s+(.*), ((?:0x)?[0-9a-fA-F]+)\);");
+                    Match match = Regex.Match(line, @"DEFINE_DEVPROPKEY\(([a-z0-9_]+),\s+(.*), ((?:0x)?[0-9a-f]+)\);", RegexOptions.IgnoreCase);
                     if (match.Groups.Count != 4)
                     {
                         throw new Exception(String.Format("Line not handled:\n{0}", line));
@@ -119,7 +120,7 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4
 /*
 #define SPDRP_CLASSGUID                   (0x00000008)  // ClassGUID (R/W)
 */
-                    Match match = Regex.Match(line, @"#define ([a-zA-Z0-9_]+) +\((0x[0-9a-fA-F]+)\)", RegexOptions.IgnoreCase);
+                    Match match = Regex.Match(line, @"#define ([a-z0-9_]+) +\((0x[0-9a-f]+)\)", RegexOptions.IgnoreCase);
                     if (match.Groups.Count != 3)
                     {
                         throw new Exception(String.Format("Line not handled:\n{0}", line));
@@ -139,6 +140,71 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4
 ");
 
             using (StreamWriter streamWriter = new StreamWriter("UsbDeviceWinApi.DeviceRegistryPropertyKeys.cs"))
+            {
+                streamWriter.Write(stringBuilder);
+            }
+        }
+
+        private static void ParseDevpropdefH(String directoryName)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(
+@"namespace Vurdalakov.UsbDevicesDotNet
+{
+    using System;
+
+    public static partial class UsbDeviceWinApi
+    {
+
+        // setupapi.h
+
+        public static class DevicePropertyTypes
+        {
+");
+
+            using (StreamReader streamReader = new StreamReader(Path.Combine(directoryName, "devpropdef.h")))
+            {
+                while (true)
+                {
+                    String line = streamReader.ReadLine();
+                    if (null == line)
+                    {
+                        break;
+                    }
+
+                    if (!line.StartsWith("#define DEVPROP_TYPE") && !line.StartsWith("#define MAX_DEVPROP_") && !line.StartsWith("#define DEVPROP_MASK_"))
+                    {
+                        continue;
+                    }
+
+/*
+#define DEVPROP_TYPE_UINT32                     0x00000007  // 32-bit unsigned int (ULONG)
+*/
+                    Match match = Regex.Match(line, @"#define ([a-z0-9_]+) +(0x[0-9a-f]+)", RegexOptions.IgnoreCase);
+                    if (match.Groups.Count != 3)
+                    {
+                        match = Regex.Match(line, @"#define ([a-z0-9_]+) +\((.+)\)", RegexOptions.IgnoreCase);
+                        if (match.Groups.Count != 3)
+                        {
+                            throw new Exception(String.Format("Line not handled:\n{0}", line));
+                        }
+                    }
+/*
+        public const UInt32 DEVPROP_TYPE_UINT32                     = 0x00000007;  // 32-bit unsigned int (ULONG)
+*/
+                    stringBuilder.AppendFormat("            public static UInt32 {0} = {1};", match.Groups[1].Value, match.Groups[2].Value);
+                    stringBuilder.AppendLine();
+                }
+            }
+
+            stringBuilder.Append(
+@"        }
+    }
+}
+");
+
+            using (StreamWriter streamWriter = new StreamWriter("UsbDeviceWinApi.DevicePropertyTypes.cs"))
             {
                 streamWriter.Write(stringBuilder);
             }
