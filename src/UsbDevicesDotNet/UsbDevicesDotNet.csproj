@@ -47,6 +47,7 @@
     <Compile Include="UsbDeviceWinApi.DevicePropertyKeys.cs" />
     <Compile Include="UsbDeviceWinApi.DevicePropertyTypes.cs" />
     <Compile Include="UsbDeviceWinApi.DeviceRegistryPropertyKeys.cs" />
+    <Compile Include="UsbDeviceWinApi.DeviceRegistryPropertyTypes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

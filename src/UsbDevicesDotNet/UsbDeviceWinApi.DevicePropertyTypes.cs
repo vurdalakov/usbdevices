@@ -5,7 +5,7 @@ namespace Vurdalakov.UsbDevicesDotNet
     public static partial class UsbDeviceWinApi
     {
 
-        // setupapi.h
+        // devpropdef.h
 
         public static class DevicePropertyTypes
         {

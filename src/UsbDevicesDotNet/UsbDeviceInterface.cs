@@ -343,7 +343,7 @@
                     else
                     {
                         this.TraceError("SetupDiGetDeviceRegistryProperty");
-                        registryProperties.Add(new UsbDeviceRegistryProperty(property, null, UsbDeviceWinApi.REG_NONE));
+                        registryProperties.Add(new UsbDeviceRegistryProperty(property, null, UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_NONE));
                     }
 
                     Marshal.FreeHGlobal(buffer);
@@ -357,30 +357,30 @@
         {
             switch (type)
             {
-                case UsbDeviceWinApi.REG_NONE:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_NONE:
                     return null;
-                case UsbDeviceWinApi.REG_SZ:
-                case UsbDeviceWinApi.REG_EXPAND_SZ:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_SZ:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_EXPAND_SZ:
                     return Marshal.PtrToStringAuto(source);
-                case UsbDeviceWinApi.REG_BINARY:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_BINARY:
                     return MarshalEx.ReadByteArray(source, length);
-                case UsbDeviceWinApi.REG_DWORD:
-              //case UsbDeviceWinApi.REG_DWORD_LITTLE_ENDIAN:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_DWORD:
+              //case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_DWORD_LITTLE_ENDIAN:
                     return (UInt32)Marshal.ReadInt32(source);
-                case UsbDeviceWinApi.REG_DWORD_BIG_ENDIAN:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_DWORD_BIG_ENDIAN:
                     return Endianness.Swap((UInt32)Marshal.ReadInt32(source));
-                case UsbDeviceWinApi.REG_LINK:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_LINK:
                     return Marshal.PtrToStringUni(source);
-                case UsbDeviceWinApi.REG_MULTI_SZ:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_MULTI_SZ:
                     return MarshalEx.ReadMultiSzStringList(source, length);
-                case UsbDeviceWinApi.REG_RESOURCE_LIST:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_RESOURCE_LIST:
                     return null; // TODO
-                case UsbDeviceWinApi.REG_FULL_RESOURCE_DESCRIPTOR:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_FULL_RESOURCE_DESCRIPTOR:
                     return null; // TODO
-                case UsbDeviceWinApi.REG_RESOURCE_REQUIREMENTS_LIST:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_RESOURCE_REQUIREMENTS_LIST:
                     return null; // TODO
-                case UsbDeviceWinApi.REG_QWORD:
-              //case UsbDeviceWinApi.REG_QWORD_LITTLE_ENDIAN:
+                case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_QWORD:
+              //case UsbDeviceWinApi.DeviceRegistryPropertyTypes.REG_QWORD_LITTLE_ENDIAN:
                     return (UInt64)Marshal.ReadInt64(source);
                 default:
                     return null;

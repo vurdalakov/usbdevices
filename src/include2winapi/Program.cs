@@ -21,6 +21,7 @@
             Program.ParseDevpkeyH(directoryName);
             Program.ParseSetupapiH(directoryName);
             Program.ParseDevpropdefH(directoryName);
+            Program.ParseWinntH(directoryName);
         }
 
         private static void ParseDevpkeyH(String directoryName)
@@ -157,7 +158,7 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4
     public static partial class UsbDeviceWinApi
     {
 
-        // setupapi.h
+        // devpropdef.h
 
         public static class DevicePropertyTypes
         {
@@ -205,6 +206,74 @@ DEFINE_DEVPROPKEY(DEVPKEY_Device_DeviceDesc,             0xa45c254e, 0xdf1c, 0x4
 ");
 
             using (StreamWriter streamWriter = new StreamWriter("UsbDeviceWinApi.DevicePropertyTypes.cs"))
+            {
+                streamWriter.Write(stringBuilder);
+            }
+        }
+
+        private static void ParseWinntH(String directoryName)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(
+@"namespace Vurdalakov.UsbDevicesDotNet
+{
+    using System;
+
+    public static partial class UsbDeviceWinApi
+    {
+
+        // winnt.h
+
+        public static class DeviceRegistryPropertyTypes
+        {
+");
+            Boolean started = false;
+            using (StreamReader streamReader = new StreamReader(Path.Combine(directoryName, "winnt.h")))
+            {
+                while (true)
+                {
+                    String line = streamReader.ReadLine();
+                    if (null == line)
+                    {
+                        break;
+                    }
+
+                    if (!started && !line.StartsWith("#define REG_NONE"))
+                    {
+                        continue;
+                    }
+
+                    started = true;
+
+                    if (!line.StartsWith("#define REG_"))
+                    {
+                        continue;
+                    }
+
+/*
+#define REG_DWORD                   ( 4 )   // 32-bit number
+*/
+                    Match match = Regex.Match(line, @"#define ([a-z0-9_]+) +\( +(\d+) +\)", RegexOptions.IgnoreCase);
+                    if (match.Groups.Count != 3)
+                    {
+                        throw new Exception(String.Format("Line not handled:\n{0}", line));
+                    }
+/*
+        public const Int32 REG_DWORD                      = 4;   // 32-bit number
+*/
+                    stringBuilder.AppendFormat("            public const Int32 {0} = {1};", match.Groups[1].Value, match.Groups[2].Value);
+                    stringBuilder.AppendLine();
+                }
+            }
+
+            stringBuilder.Append(
+@"        }
+    }
+}
+");
+
+            using (StreamWriter streamWriter = new StreamWriter("UsbDeviceWinApi.DeviceRegistryPropertyTypes.cs"))
             {
                 streamWriter.Write(stringBuilder);
             }
