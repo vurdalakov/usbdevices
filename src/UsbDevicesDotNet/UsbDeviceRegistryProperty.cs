@@ -2,6 +2,7 @@
 {
     using System;
     using System.Text;
+    using System.Reflection;
 
     public class UsbDeviceRegistryProperty
     {
@@ -23,79 +24,16 @@
 
         public String GetDescription()
         {
-            switch (this.Key)
+            foreach (FieldInfo field in typeof(UsbDeviceWinApi.DeviceRegistryPropertyKeys).GetFields(BindingFlags.Static | BindingFlags.Public))
             {
-                case UsbDeviceWinApi.SPDRP_DEVICEDESC:
-                    return "SPDRP_DEVICEDESC";
-                case UsbDeviceWinApi.SPDRP_HARDWAREID:
-                    return "SPDRP_HARDWAREID";
-                case UsbDeviceWinApi.SPDRP_COMPATIBLEIDS:
-                    return "SPDRP_COMPATIBLEIDS";
-                case UsbDeviceWinApi.SPDRP_SERVICE:
-                    return "SPDRP_SERVICE";
-                case UsbDeviceWinApi.SPDRP_CLASS:
-                    return "SPDRP_CLASS";
-                case UsbDeviceWinApi.SPDRP_CLASSGUID:
-                    return "SPDRP_CLASSGUID";
-                case UsbDeviceWinApi.SPDRP_DRIVER:
-                    return "SPDRP_DRIVER";
-                case UsbDeviceWinApi.SPDRP_CONFIGFLAGS:
-                    return "SPDRP_CONFIGFLAGS";
-                case UsbDeviceWinApi.SPDRP_MFG:
-                    return "SPDRP_MFG";
-                case UsbDeviceWinApi.SPDRP_FRIENDLYNAME:
-                    return "SPDRP_FRIENDLYNAME";
-                case UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION:
-                    return "SPDRP_LOCATION_INFORMATION";
-                case UsbDeviceWinApi.SPDRP_PHYSICAL_DEVICE_OBJECT_NAME:
-                    return "SPDRP_PHYSICAL_DEVICE_OBJECT_NAME";
-                case UsbDeviceWinApi.SPDRP_CAPABILITIES:
-                    return "SPDRP_CAPABILITIES";
-                case UsbDeviceWinApi.SPDRP_UI_NUMBER:
-                    return "SPDRP_UI_NUMBER";
-                case UsbDeviceWinApi.SPDRP_UPPERFILTERS:
-                    return "SPDRP_UPPERFILTERS";
-                case UsbDeviceWinApi.SPDRP_LOWERFILTERS:
-                    return "SPDRP_LOWERFILTERS";
-                case UsbDeviceWinApi.SPDRP_BUSTYPEGUID:
-                    return "SPDRP_BUSTYPEGUID";
-                case UsbDeviceWinApi.SPDRP_LEGACYBUSTYPE:
-                    return "SPDRP_LEGACYBUSTYPE";
-                case UsbDeviceWinApi.SPDRP_BUSNUMBER:
-                    return "SPDRP_BUSNUMBER";
-                case UsbDeviceWinApi.SPDRP_ENUMERATOR_NAME:
-                    return "SPDRP_ENUMERATOR_NAME";
-                case UsbDeviceWinApi.SPDRP_SECURITY:
-                    return "SPDRP_SECURITY";
-                case UsbDeviceWinApi.SPDRP_SECURITY_SDS:
-                    return "SPDRP_SECURITY_SDS";
-                case UsbDeviceWinApi.SPDRP_DEVTYPE:
-                    return "SPDRP_DEVTYPE";
-                case UsbDeviceWinApi.SPDRP_EXCLUSIVE:
-                    return "SPDRP_EXCLUSIVE";
-                case UsbDeviceWinApi.SPDRP_CHARACTERISTICS:
-                    return "SPDRP_CHARACTERISTICS";
-                case UsbDeviceWinApi.SPDRP_ADDRESS:
-                    return "SPDRP_ADDRESS";
-                case UsbDeviceWinApi.SPDRP_UI_NUMBER_DESC_FORMAT:
-                    return "SPDRP_UI_NUMBER_DESC_FORMAT";
-                case UsbDeviceWinApi.SPDRP_DEVICE_POWER_DATA:
-                    return "SPDRP_DEVICE_POWER_DATA";
-                case UsbDeviceWinApi.SPDRP_REMOVAL_POLICY:
-                    return "SPDRP_REMOVAL_POLICY";
-                case UsbDeviceWinApi.SPDRP_REMOVAL_POLICY_HW_DEFAULT:
-                    return "SPDRP_REMOVAL_POLICY_HW_DEFAULT";
-                case UsbDeviceWinApi.SPDRP_REMOVAL_POLICY_OVERRIDE:
-                    return "SPDRP_REMOVAL_POLICY_OVERRIDE";
-                case UsbDeviceWinApi.SPDRP_INSTALL_STATE:
-                    return "SPDRP_INSTALL_STATE";
-                case UsbDeviceWinApi.SPDRP_LOCATION_PATHS:
-                    return "SPDRP_LOCATION_PATHS";
-                case UsbDeviceWinApi.SPDRP_BASE_CONTAINERID:
-                    return "SPDRP_BASE_CONTAINERID";
-                default:
-                    return "<unknown>";
+                UInt32 key = (UInt32)field.GetValue(null);
+                if (this.HasSameKey(key))
+                {
+                    return field.Name;
+                }
             }
+
+            return "Unknown key";
         }
 
         public String[] GetValue()

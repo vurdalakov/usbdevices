@@ -21,9 +21,9 @@
                     Console.WriteLine("Interface ID  = {0}", interfaceId);
                 }
 
-                Console.WriteLine("LocationInformation = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_INFORMATION));
+                Console.WriteLine("LocationInformation = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.DeviceRegistryPropertyKeys.SPDRP_LOCATION_INFORMATION));
 
-                foreach (String locationPath in usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.SPDRP_LOCATION_PATHS) as String[])
+                foreach (String locationPath in usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.DeviceRegistryPropertyKeys.SPDRP_LOCATION_PATHS) as String[])
                 {
                     Console.WriteLine("LocationPaths = {0}", locationPath);
                 }
