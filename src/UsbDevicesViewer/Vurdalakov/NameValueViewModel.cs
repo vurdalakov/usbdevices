@@ -4,7 +4,7 @@
 
     public class NameValueViewModel : ViewModelBase
     {
-        public NameValueViewModel(String name, String value)
+        public NameValueViewModel(String name, Object value)
         {
             this.name = name;
             this.value = value;

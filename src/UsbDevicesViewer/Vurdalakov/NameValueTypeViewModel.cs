@@ -4,13 +4,13 @@
 
     public class NameValueTypeViewModel : NameValueViewModel
     {
-        public NameValueTypeViewModel(String name, String value, String type) : base(name, value)
+        public NameValueTypeViewModel(String name, Object value, Object type) : base(name, value)
         {
             this.type = type;
         }
 
-        private String type;
-        public String Type
+        private Object type;
+        public Object Type
         {
             get
             {
