@@ -1,6 +1,7 @@
 ﻿<Window x:Class="UsbDevicesViewer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:UsbDevicesViewer"
         Title="USB Devices Viewer" Width="1200" Height="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -34,7 +35,17 @@
             </ToolBarPanel>
         </DockPanel>
 
-        <ListView Grid.Row="2" ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False">
+        <ListView Grid.Row="2" ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
+            <ListView.ContextMenu>
+                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <MenuItem Header="Copy VID" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="1001"/>
+                    <MenuItem Header="Copy PID" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="1002"/>
+                    <MenuItem Header="Copy Hub And Port" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="1003"/>
+                    <MenuItem Header="Copy Description" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="1004"/>
+                    <MenuItem Header="Copy Device ID" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="1005"/>
+                    <MenuItem Header="Copy Device Path" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="1006"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.View>
                 <GridView AllowsColumnReorder="true">
                     <GridViewColumn Header="VID" Width="Auto">
@@ -87,7 +98,14 @@
 
         <TabControl Grid.Row="4">
             <TabItem Header="Properties">
-                <ListView ItemsSource="{Binding SelectedUsbDevice.Properties}" ScrollViewer.CanContentScroll="False">
+                <ListView ItemsSource="{Binding SelectedUsbDevice.Properties}" SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,2,0,-2">
+                    <ListView.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Copy Name" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="2001"/>
+                            <MenuItem Header="Copy Type" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="2002"/>
+                            <MenuItem Header="Copy Value" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="2003"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                     <ListView.View>
                         <GridView AllowsColumnReorder="true">
                             <GridViewColumn Header="Name" Width="Auto">
@@ -116,7 +134,14 @@
                 </ListView>
             </TabItem>
             <TabItem Header="Registry Properties">
-                <ListView ItemsSource="{Binding SelectedUsbDevice.RegistryProperties}" ScrollViewer.CanContentScroll="False">
+                <ListView ItemsSource="{Binding SelectedUsbDevice.RegistryProperties}" SelectedItem="{Binding SelectedRegistryProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
+                    <ListView.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Copy Name" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3001"/>
+                            <MenuItem Header="Copy Type" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3002"/>
+                            <MenuItem Header="Copy Value" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3003"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                     <ListView.View>
                         <GridView AllowsColumnReorder="true">
                             <GridViewColumn Header="Name" Width="Auto">

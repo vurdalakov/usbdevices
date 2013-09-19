@@ -1,6 +1,7 @@
 ﻿namespace UsbDevicesViewer
 {
     using System;
+    using System.Windows;
     using System.Windows.Input;
 
     using Vurdalakov;
@@ -45,6 +46,40 @@
             }
         }
 
+        private NameValueTypeViewModel selectedProperty;
+        public NameValueTypeViewModel SelectedProperty
+        {
+            get
+            {
+                return this.selectedProperty;
+            }
+            set
+            {
+                if (value != this.selectedProperty)
+                {
+                    this.selectedProperty = value;
+                    this.OnPropertyChanged(() => this.SelectedProperty);
+                }
+            }
+        }
+
+        private NameValueTypeViewModel selectedRegistryProperty;
+        public NameValueTypeViewModel SelectedRegistryProperty
+        {
+            get
+            {
+                return this.selectedRegistryProperty;
+            }
+            set
+            {
+                if (value != this.selectedRegistryProperty)
+                {
+                    this.selectedRegistryProperty = value;
+                    this.OnPropertyChanged(() => this.SelectedRegistryProperty);
+                }
+            }
+        }
+
         public MainWindowViewModel()
         {
             this.InterfaceTypes = new ThreadSafeObservableCollection<NameValueViewModel>();
@@ -55,6 +90,8 @@
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
             this.RefreshCommand = new CommandBase(this.Refresh);
+
+            this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
         }
 
         public ICommand RefreshCommand { get; private set; }
@@ -74,6 +111,50 @@
             foreach (UsbDevice usbDevice in usbDevices)
             {
                 this.UsbDevices.Add(new UsbDeviceViewModel(usbDevice));
+            }
+        }
+
+        public ICommand CopyCommand { get; private set; }
+        public void OnCopyCommand(String source)
+        {
+            switch (source)
+            {
+                case "1001":
+                    Clipboard.SetText(this.SelectedUsbDevice.Vid);
+                    break;
+                case "1002":
+                    Clipboard.SetText(this.SelectedUsbDevice.Pid);
+                    break;
+                case "1003":
+                    Clipboard.SetText(this.SelectedUsbDevice.HubAndPort);
+                    break;
+                case "1004":
+                    Clipboard.SetText(this.SelectedUsbDevice.Description);
+                    break;
+                case "1005":
+                    Clipboard.SetText(this.SelectedUsbDevice.DeviceId);
+                    break;
+                case "1006":
+                    Clipboard.SetText(this.SelectedUsbDevice.DevicePath);
+                    break;
+                case "2001":
+                    Clipboard.SetText(this.SelectedProperty.Name);
+                    break;
+                case "2002":
+                    Clipboard.SetText(this.SelectedProperty.Type as String);
+                    break;
+                case "2003":
+                    Clipboard.SetText(this.SelectedProperty.Value as String);
+                    break;
+                case "3001":
+                    Clipboard.SetText(this.SelectedRegistryProperty.Name);
+                    break;
+                case "3002":
+                    Clipboard.SetText(this.SelectedRegistryProperty.Type as String);
+                    break;
+                case "3003":
+                    Clipboard.SetText(this.SelectedRegistryProperty.Value as String);
+                    break;
             }
         }
     }
