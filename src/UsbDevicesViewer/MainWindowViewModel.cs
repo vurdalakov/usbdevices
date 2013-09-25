@@ -112,6 +112,11 @@
             {
                 this.UsbDevices.Add(new UsbDeviceViewModel(usbDevice));
             }
+
+            if (this.UsbDevices.Count > 0)
+            {
+                this.SelectedUsbDevice = this.UsbDevices[0];
+            }
         }
 
         public ICommand CopyCommand { get; private set; }

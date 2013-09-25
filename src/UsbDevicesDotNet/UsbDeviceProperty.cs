@@ -33,7 +33,7 @@
                 }
             }
 
-            return "Unknown key";
+            return String.Format("{0:B}, {1}", this.Key.Fmtid, this.Key.Pid);
         }
 
         public String[] GetValues()
@@ -81,7 +81,7 @@
                 }
             }
 
-            return "Unknown key";
+            return String.Format("0x{0:X8}", this.Type);
         }
 
         private String[] MakeArray(String value)

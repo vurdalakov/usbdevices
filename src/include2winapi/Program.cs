@@ -12,16 +12,30 @@
             if (0 == args.Length)
             {
                 Console.WriteLine(@"Usage: include2winapi <path to Windows SDK include directory>");
-                Console.WriteLine(@"Example: include2winapi C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include");
+                Console.WriteLine(@"Examples:");
+                Console.WriteLine(@"  include2winapi ""C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include""");
+                Console.WriteLine(@"  include2winapi ""C:\Program Files (x86)\Windows Kits\8.0\Include""");
                 return;
             }
 
             String directoryName = args[0];
 
-            Program.ParseDevpkeyH(directoryName);
-            Program.ParseSetupapiH(directoryName);
-            Program.ParseDevpropdefH(directoryName);
-            Program.ParseWinntH(directoryName);
+            String sharedDirectory = Path.Combine(directoryName, "shared");
+            if (!Directory.Exists(sharedDirectory))
+            {
+                sharedDirectory = directoryName;
+            }
+
+            String umDirectory = Path.Combine(directoryName, "um");
+            if (!Directory.Exists(umDirectory))
+            {
+                umDirectory = directoryName;
+            }
+
+            Program.ParseDevpkeyH(sharedDirectory);
+            Program.ParseSetupapiH(umDirectory);
+            Program.ParseDevpropdefH(sharedDirectory);
+            Program.ParseWinntH(umDirectory);
         }
 
         private static void ParseDevpkeyH(String directoryName)

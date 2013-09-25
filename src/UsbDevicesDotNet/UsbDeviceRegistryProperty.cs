@@ -33,7 +33,7 @@
                 }
             }
 
-            return "Unknown key";
+            return String.Format("0x{0:X8}", this.Key);
         }
 
         public String[] GetValue()
@@ -84,7 +84,7 @@
                 }
             }
 
-            return "Unknown key";
+            return String.Format("{0}", this.Type);
         }
 
         private String[] MakeArray(String value)
