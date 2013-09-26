@@ -30,7 +30,12 @@
                 <ToolBar ToolBarTray.IsLocked="True">
                     <TextBlock Text="Show:" Margin="8,2,4,0" />
                     <ComboBox ItemsSource="{Binding InterfaceTypes}" DisplayMemberPath="Name" SelectedItem="{Binding InterfaceType}" IsEditable="False" Width="150" Margin="0" />
-                    <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="8,0,4,0" />
+                    <Grid>
+                        <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="8,0,4,0" />
+                    </Grid>
+                    <Grid>
+                        <CheckBox Content="Refresh on WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" VerticalAlignment="Center" />
+                    </Grid>
                 </ToolBar>
             </ToolBarPanel>
         </DockPanel>

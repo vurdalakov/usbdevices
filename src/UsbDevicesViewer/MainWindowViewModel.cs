@@ -80,6 +80,8 @@
             }
         }
 
+        private Win32UsbControllerDevices win32UsbControllerDevices = new Win32UsbControllerDevices();
+
         public MainWindowViewModel()
         {
             this.InterfaceTypes = new ThreadSafeObservableCollection<NameValueViewModel>();
@@ -92,7 +94,56 @@
             this.RefreshCommand = new CommandBase(this.Refresh);
 
             this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
+
+            this.win32UsbControllerDevices.DeviceConnected += OnWin32UsbControllerDevicesDeviceConnected;
+            this.win32UsbControllerDevices.DeviceDisconnected += OnWin32UsbControllerDevicesDeviceDisconnected;
+            this.EnableWmiWatcher(true);
         }
+
+        #region WMI events
+
+        private void EnableWmiWatcher(Boolean enable)
+        {
+            if (enable)
+            {
+                this.win32UsbControllerDevices.StartWatcher();
+            }
+            else
+            {
+                this.win32UsbControllerDevices.StopWatcher();
+            }
+        }
+
+        private Boolean refreshListOnWmiEvents = true;
+        public Boolean RefreshListOnWmiEvents
+        {
+            get
+            {
+                return this.refreshListOnWmiEvents;
+            }
+            set
+            {
+                if (value != this.refreshListOnWmiEvents)
+                {
+                    this.refreshListOnWmiEvents = value;
+                    this.OnPropertyChanged(() => this.RefreshListOnWmiEvents);
+
+                    this.EnableWmiWatcher(this.refreshListOnWmiEvents);
+                }
+            }
+        }
+
+        private void OnWin32UsbControllerDevicesDeviceConnected(Object sender, Win32UsbControllerDeviceEventArgs e)
+        {
+            this.Refresh();
+        }
+
+        private void OnWin32UsbControllerDevicesDeviceDisconnected(Object sender, Win32UsbControllerDeviceEventArgs e)
+        {
+            this.Refresh();
+        }
+
+        #endregion
 
         public ICommand RefreshCommand { get; private set; }
 
