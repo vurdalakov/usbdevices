@@ -61,7 +61,7 @@
         {
             try
             {
-                ManagementObject targetInstance = e.NewEvent.GetPropertyValue("TargetInstance") as ManagementObject;
+                ManagementBaseObject targetInstance = e.NewEvent.GetPropertyValue("TargetInstance") as ManagementBaseObject;
 
                 Win32UsbControllerDevice win32UsbControllerDevice = this.GetDevice(targetInstance);
 
@@ -86,7 +86,7 @@
         {
             try
             {
-                ManagementObject targetInstance = e.NewEvent.GetPropertyValue("TargetInstance") as ManagementObject;
+                ManagementBaseObject targetInstance = e.NewEvent.GetPropertyValue("TargetInstance") as ManagementBaseObject;
 
                 Win32UsbControllerDevice win32UsbControllerDevice = this.GetDevice(targetInstance);
 
@@ -105,7 +105,7 @@
             }
         }
 
-        private Win32UsbControllerDevice GetDevice(ManagementObject managementObject)
+        private Win32UsbControllerDevice GetDevice(ManagementBaseObject managementObject)
         {
             try
             {

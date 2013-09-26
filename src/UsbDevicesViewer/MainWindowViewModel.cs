@@ -1,6 +1,7 @@
 ﻿namespace UsbDevicesViewer
 {
     using System;
+    using System.Collections.Generic;
     using System.Windows;
     using System.Windows.Input;
 
@@ -91,7 +92,7 @@
 
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
-            this.RefreshCommand = new CommandBase(this.Refresh);
+            this.RefreshCommand = new CommandBase(this.OnRefreshCommand);
 
             this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
 
@@ -135,35 +136,65 @@
 
         private void OnWin32UsbControllerDevicesDeviceConnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.Refresh();
+            if (!String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
+            {
+                this.Refresh(e.Device.DeviceId);
+            }
         }
 
         private void OnWin32UsbControllerDevicesDeviceDisconnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.Refresh();
+            if (!String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
+            {
+                this.Refresh();
+            }
         }
 
         #endregion
 
         public ICommand RefreshCommand { get; private set; }
-
-        public void Refresh()
+        public void OnRefreshCommand()
         {
-            this.UsbDevices.Clear();
+            this.Refresh();
+        }
 
+        public void Refresh(String deviceId = null)
+        {
             if (null == this.InterfaceType)
             {
                 this.InterfaceType = this.InterfaceTypes[2];
                 return;
             }
 
-            UsbDevice[] usbDevices = UsbDevice.GetDevices(new Guid(this.InterfaceType.Value as String));
-
-            foreach (UsbDevice usbDevice in usbDevices)
+            if (String.IsNullOrEmpty(deviceId) && (this.SelectedUsbDevice != null))
             {
-                this.UsbDevices.Add(new UsbDeviceViewModel(usbDevice));
+                deviceId = this.SelectedUsbDevice.DeviceId;
             }
 
+            this.UsbDevices.Clear();
+
+            UsbDevice[] usbDevices = UsbDevice.GetDevices(new Guid(this.InterfaceType.Value as String));
+
+            List<UsbDeviceViewModel> usbDeviceViewModels = new List<UsbDeviceViewModel>();
+            foreach (UsbDevice usbDevice in usbDevices)
+            {
+                usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice));
+            }
+
+            this.UsbDevices.AddRange(usbDeviceViewModels);
+
+            if (!String.IsNullOrEmpty(deviceId))
+            {
+                foreach (UsbDeviceViewModel usbDeviceViewModel in this.UsbDevices)
+                {
+                    if (usbDeviceViewModel.DeviceId.Equals(deviceId, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        this.SelectedUsbDevice = usbDeviceViewModel;
+                        return;
+                    }
+                }
+            }
+            
             if (this.UsbDevices.Count > 0)
             {
                 this.SelectedUsbDevice = this.UsbDevices[0];
