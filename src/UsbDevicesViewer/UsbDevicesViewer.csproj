@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="UsbDeviceViewModel.cs" />
+    <Compile Include="Vurdalakov\BooleanToObjectConverter.cs" />
     <Compile Include="Vurdalakov\CommandBase.cs" />
     <Compile Include="Vurdalakov\CommandBaseGeneric.cs" />
     <Compile Include="Vurdalakov\NameValueTypeViewModel.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Win32UsbControllerDevice.cs" />
     <Compile Include="Win32UsbControllerDeviceEventArgs.cs" />
     <Compile Include="Win32UsbControllerDevices.cs" />
+    <Compile Include="WmiEvent.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

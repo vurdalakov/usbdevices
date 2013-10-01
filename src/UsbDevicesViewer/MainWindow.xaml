@@ -102,7 +102,8 @@
         <GridSplitter Grid.Row="3" ResizeBehavior="PreviousAndNext" Height="5" HorizontalAlignment="Stretch" />
 
         <TabControl Grid.Row="4">
-            <TabItem Header="Properties">
+            
+            <TabItem Header="Device Properties">
                 <ListView ItemsSource="{Binding SelectedUsbDevice.Properties}" SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,2,0,-2">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -138,7 +139,8 @@
                     </ListView.View>
                 </ListView>
             </TabItem>
-            <TabItem Header="Registry Properties">
+
+            <TabItem Header="Device Registry Properties">
                 <ListView ItemsSource="{Binding SelectedUsbDevice.RegistryProperties}" SelectedItem="{Binding SelectedRegistryProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -174,6 +176,73 @@
                     </ListView.View>
                 </ListView>
             </TabItem>
+
+            <TabItem Header="WMI Events">
+                <ListView ItemsSource="{Binding WmiEvents}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="5,0,-5,0">
+                    <ListView.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Clear" Command="{Binding PlacementTarget.Tag.ClearWmiEventsCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"/>
+                            <!--MenuItem Header="Copy Name" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3001"/>
+                            <MenuItem Header="Copy Type" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3002"/>
+                            <MenuItem Header="Copy Value" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3003"/-->
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="true">
+                            <GridViewColumn Header="Time" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss.ffff}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Type" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ConnectEvent, Converter={StaticResource BooleanToConnectedConverter}}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="VID" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Device.Vid}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="PID" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Device.Pid}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Hub:Port" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding HubAndPort}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Device ID" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Device.DeviceId}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Controller ID" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Device.ControllerId}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+
         </TabControl>
 
         <StatusBar Grid.Row="5" HorizontalAlignment="Stretch">

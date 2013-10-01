@@ -92,9 +92,12 @@
 
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
+            this.WmiEvents = new ThreadSafeObservableCollection<WmiEvent>();
+
             this.RefreshCommand = new CommandBase(this.OnRefreshCommand);
 
             this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
+            this.ClearWmiEventsCommand = new CommandBase<String>(this.OnClearWmiEventsCommand);
 
             this.win32UsbControllerDevices.DeviceConnected += OnWin32UsbControllerDevicesDeviceConnected;
             this.win32UsbControllerDevices.DeviceDisconnected += OnWin32UsbControllerDevicesDeviceDisconnected;
@@ -128,15 +131,15 @@
                 {
                     this.refreshListOnWmiEvents = value;
                     this.OnPropertyChanged(() => this.RefreshListOnWmiEvents);
-
-                    this.EnableWmiWatcher(this.refreshListOnWmiEvents);
                 }
             }
         }
 
         private void OnWin32UsbControllerDevicesDeviceConnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            if (!String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
+            this.WmiEvents.Insert(0, new WmiEvent(true, e.Device));
+
+            if (this.RefreshListOnWmiEvents && !String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
             {
                 this.Refresh(e.Device.DeviceId);
             }
@@ -144,10 +147,20 @@
 
         private void OnWin32UsbControllerDevicesDeviceDisconnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            if (!String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
+            this.WmiEvents.Insert(0, new WmiEvent(false, e.Device));
+
+            if (this.RefreshListOnWmiEvents && !String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
             {
                 this.Refresh();
             }
+        }
+
+        public ThreadSafeObservableCollection<WmiEvent> WmiEvents { get; set; }
+
+        public ICommand ClearWmiEventsCommand { get; private set; }
+        public void OnClearWmiEventsCommand(String source)
+        {
+            this.WmiEvents.Clear();
         }
 
         #endregion

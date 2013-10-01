@@ -1,8 +1,11 @@
 ﻿<Application x:Class="UsbDevicesViewer.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    StartupUri="MainWindow.xaml"
+    xmlns:vurdalakov="clr-namespace:Vurdalakov">
+
     <Application.Resources>
-         
+        <vurdalakov:BooleanToObjectConverter TrueValue="Connected" FalseValue="Disconnected" x:Key="BooleanToConnectedConverter"/>
     </Application.Resources>
+    
 </Application>
