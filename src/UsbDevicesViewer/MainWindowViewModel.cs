@@ -89,6 +89,7 @@
             this.InterfaceTypes.Add(new NameValueViewModel("USB Host Controllers", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER));
             this.InterfaceTypes.Add(new NameValueViewModel("USB Hubs", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB));
             this.InterfaceTypes.Add(new NameValueViewModel("USB Devices", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE));
+            this.InterfaceTypes.Add(new NameValueViewModel("Windows Phone 1", "0FD3B15C-D457-45d8-A779-C2B2C9F9D0FD"));
 
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
@@ -101,6 +102,7 @@
 
             this.win32UsbControllerDevices.DeviceConnected += OnWin32UsbControllerDevicesDeviceConnected;
             this.win32UsbControllerDevices.DeviceDisconnected += OnWin32UsbControllerDevicesDeviceDisconnected;
+            this.win32UsbControllerDevices.DeviceModified += OnWin32UsbControllerDevicesDeviceModified;
             this.EnableWmiWatcher(true);
         }
 
@@ -137,19 +139,28 @@
 
         private void OnWin32UsbControllerDevicesDeviceConnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.WmiEvents.Insert(0, new WmiEvent(true, e.Device));
+            this.WmiEvents.Insert(0, new WmiEvent(0, e.Device));
 
-            if (this.RefreshListOnWmiEvents && !String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
-            {
-                this.Refresh(e.Device.DeviceId);
-            }
+            this.RefreshOnWmiEvent(e.Device);
         }
 
         private void OnWin32UsbControllerDevicesDeviceDisconnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.WmiEvents.Insert(0, new WmiEvent(false, e.Device));
+            this.WmiEvents.Insert(0, new WmiEvent(1, e.Device));
 
-            if (this.RefreshListOnWmiEvents && !String.IsNullOrEmpty(e.Device.DeviceId) && (e.Device.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
+            this.RefreshOnWmiEvent(e.Device);
+        }
+
+        private void OnWin32UsbControllerDevicesDeviceModified(object sender, Win32UsbControllerDeviceEventArgs e)
+        {
+            this.WmiEvents.Insert(0, new WmiEvent(2, e.Device));
+
+            this.RefreshOnWmiEvent(e.Device);
+        }
+
+        private void RefreshOnWmiEvent(Win32UsbControllerDevice win32UsbControllerDevice)
+        {
+            if (this.RefreshListOnWmiEvents && !String.IsNullOrEmpty(win32UsbControllerDevice.DeviceId) && (win32UsbControllerDevice.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
             {
                 this.Refresh();
             }
@@ -192,6 +203,14 @@
             foreach (UsbDevice usbDevice in usbDevices)
             {
                 usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice));
+
+                if (this.ShowDeviceInterfaces)
+                {
+                    foreach (String interfaceId in usbDevice.InterfaceIds)
+                    {
+                        usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice, interfaceId));
+                    }
+                }
             }
 
             this.UsbDevices.AddRange(usbDeviceViewModels);
@@ -255,6 +274,26 @@
                 case "3003":
                     Clipboard.SetText(this.SelectedRegistryProperty.Value as String);
                     break;
+            }
+        }
+
+
+        private Boolean showDeviceInterfaces = false;
+        public Boolean ShowDeviceInterfaces
+        {
+            get
+            {
+                return this.showDeviceInterfaces;
+            }
+            set
+            {
+                if (value != this.showDeviceInterfaces)
+                {
+                    this.showDeviceInterfaces = value;
+                    this.OnPropertyChanged(() => this.ShowDeviceInterfaces);
+
+                    this.Refresh();
+                }
             }
         }
     }

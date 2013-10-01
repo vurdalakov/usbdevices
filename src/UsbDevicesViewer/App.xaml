@@ -5,7 +5,8 @@
     xmlns:vurdalakov="clr-namespace:Vurdalakov">
 
     <Application.Resources>
-        <vurdalakov:BooleanToObjectConverter TrueValue="Connected" FalseValue="Disconnected" x:Key="BooleanToConnectedConverter"/>
+        <vurdalakov:IntegerToObjectConverter Value0="Connected" Value1="Disconnected" Value2="Modified" x:Key="IntegerToWmiEventTypeConverter" />
+        <vurdalakov:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Application.Resources>
     
 </Application>

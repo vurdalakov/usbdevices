@@ -14,6 +14,8 @@
         public String DevicePath { get; private set; }
         public String Description { get; private set; }
 
+        public Boolean IsInterface { get; private set; }
+
         public ThreadSafeObservableCollection<NameValueTypeViewModel> Properties { get; private set; }
 
         public ThreadSafeObservableCollection<NameValueTypeViewModel> RegistryProperties { get; private set; }
@@ -23,7 +25,21 @@
             this.Properties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
             this.RegistryProperties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
 
+            this.IsInterface = false;
+
             this.Refresh(usbDevice);
+        }
+
+        public UsbDeviceViewModel(UsbDevice usbDevice, String interfaceId) : this(usbDevice)
+        {
+            this.Vid = String.Empty;
+            this.Pid = String.Empty;
+            this.HubAndPort = String.Empty;
+            this.DeviceId = interfaceId;
+            this.DevicePath = String.Empty;
+            this.Description = String.Empty;
+
+            this.IsInterface = true;
         }
 
         public void Refresh(UsbDevice usbDevice)

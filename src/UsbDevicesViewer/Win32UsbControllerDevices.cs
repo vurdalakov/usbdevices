@@ -3,11 +3,13 @@
     using System;
     using System.Management;
     using Microsoft.Win32;
+    using Vurdalakov.UsbDevicesDotNet;
 
     public class Win32UsbControllerDevices
     {
         private ManagementEventWatcher managementEventWatcherDeviceConnected;
         private ManagementEventWatcher managementEventWatcherDeviceDisconnected;
+        private ManagementEventWatcher managementEventWatcherDeviceModified;
 
         public void StartWatcher()
         {
@@ -27,9 +29,15 @@
                 this.managementEventWatcherDeviceDisconnected = new ManagementEventWatcher(managementScope, wqlEventQuery);
                 this.managementEventWatcherDeviceDisconnected.EventArrived += this.OnDeviceDisconnected;
                 this.managementEventWatcherDeviceDisconnected.Start();
+
+                wqlEventQuery = new WqlEventQuery("__InstanceModificationEvent", new TimeSpan(0, 0, 1), query);
+                this.managementEventWatcherDeviceModified = new ManagementEventWatcher(managementScope, wqlEventQuery);
+                this.managementEventWatcherDeviceModified.EventArrived += this.OnDeviceModified;
+                this.managementEventWatcherDeviceModified.Start();
             }
             catch (Exception ex)
             {
+                Tracer.Trace(ex, "Error starting WMI watcher");
             }
         }
 
@@ -48,9 +56,16 @@
                     this.managementEventWatcherDeviceDisconnected.Stop();
                     this.managementEventWatcherDeviceDisconnected = null;
                 }
+
+                if (this.managementEventWatcherDeviceModified != null)
+                {
+                    this.managementEventWatcherDeviceModified.Stop();
+                    this.managementEventWatcherDeviceModified = null;
+                }
             }
             catch (Exception ex)
             {
+                Tracer.Trace(ex, "Error stopping WMI watcher");
             }
         }
 
@@ -77,6 +92,7 @@
             }
             catch (Exception ex)
             {
+                Tracer.Trace(ex, "Error handling WMI creation event");
             }
         }
 
@@ -102,6 +118,33 @@
             }
             catch (Exception ex)
             {
+                Tracer.Trace(ex, "Error handling WMI deletion event");
+            }
+        }
+
+        public event Win32UsbControllerDeviceEventHandler DeviceModified;
+
+        private void OnDeviceModified(Object sender, EventArrivedEventArgs e)
+        {
+            try
+            {
+                ManagementBaseObject targetInstance = e.NewEvent.GetPropertyValue("TargetInstance") as ManagementBaseObject;
+
+                Win32UsbControllerDevice win32UsbControllerDevice = this.GetDevice(targetInstance);
+
+                if (null == win32UsbControllerDevice)
+                {
+                    return;
+                }
+
+                if (this.DeviceModified != null)
+                {
+                    this.DeviceModified(this, new Win32UsbControllerDeviceEventArgs(win32UsbControllerDevice));
+                }
+            }
+            catch (Exception ex)
+            {
+                Tracer.Trace(ex, "Error handling WMI modification event");
             }
         }
 

@@ -36,6 +36,9 @@
                     <Grid>
                         <CheckBox Content="Refresh on WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" VerticalAlignment="Center" />
                     </Grid>
+                    <Grid>
+                        <CheckBox Content="Show device interfaces" IsChecked="{Binding ShowDeviceInterfaces}" VerticalAlignment="Center" />
+                    </Grid>
                 </ToolBar>
             </ToolBarPanel>
         </DockPanel>
@@ -84,7 +87,10 @@
                     <GridViewColumn Header="Device ID" Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding DeviceId}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,0,0,0"/>
+                                    <TextBlock Text="{Binding DeviceId}"/>
+                                </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -199,7 +205,7 @@
                             <GridViewColumn Header="Type" Width="Auto">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding ConnectEvent, Converter={StaticResource BooleanToConnectedConverter}}"/>
+                                        <TextBlock Text="{Binding EventType, Converter={StaticResource IntegerToWmiEventTypeConverter}}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

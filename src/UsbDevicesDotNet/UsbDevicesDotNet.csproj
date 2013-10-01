@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Endianness.cs" />
+    <Compile Include="Tracer.cs" />
     <Compile Include="UsbDeviceRegistryProperty.cs" />
     <Compile Include="MarshalEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

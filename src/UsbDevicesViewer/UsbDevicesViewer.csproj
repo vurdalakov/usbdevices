@@ -56,8 +56,10 @@
     </ApplicationDefinition>
     <Compile Include="UsbDeviceViewModel.cs" />
     <Compile Include="Vurdalakov\BooleanToObjectConverter.cs" />
+    <Compile Include="Vurdalakov\BooleanToVisibilityConverter.cs" />
     <Compile Include="Vurdalakov\CommandBase.cs" />
     <Compile Include="Vurdalakov\CommandBaseGeneric.cs" />
+    <Compile Include="Vurdalakov\IntegerToObjectConverter.cs" />
     <Compile Include="Vurdalakov\NameValueTypeViewModel.cs" />
     <Compile Include="Vurdalakov\NameValueViewModel.cs" />
     <Compile Include="Vurdalakov\ThreadSafeObservableCollection.cs" />
