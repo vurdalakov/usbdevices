@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers.cs" />
     <Compile Include="UsbDeviceViewModel.cs" />
     <Compile Include="Vurdalakov\BooleanToObjectConverter.cs" />
     <Compile Include="Vurdalakov\BooleanToVisibilityConverter.cs" />
@@ -114,6 +115,9 @@
       <Project>{8d716417-07dd-40a6-8229-cd523e3adf99}</Project>
       <Name>UsbDevicesDotNet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\toolbar_refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

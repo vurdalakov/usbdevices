@@ -89,7 +89,6 @@
             this.InterfaceTypes.Add(new NameValueViewModel("USB Host Controllers", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER));
             this.InterfaceTypes.Add(new NameValueViewModel("USB Hubs", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB));
             this.InterfaceTypes.Add(new NameValueViewModel("USB Devices", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE));
-            this.InterfaceTypes.Add(new NameValueViewModel("Windows Phone 1", "0FD3B15C-D457-45d8-A779-C2B2C9F9D0FD"));
 
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 

@@ -50,7 +50,7 @@
             this.Pid = usbDevice.Pid;
             this.OnPropertyChanged(() => this.Pid);
 
-            this.HubAndPort = String.Format("{0}:{1}", usbDevice.Hub, usbDevice.Port);
+            this.HubAndPort = Helpers.MakeHubAndPort(usbDevice.Hub, usbDevice.Port);
             this.OnPropertyChanged(() => this.HubAndPort);
 
             this.DeviceId = usbDevice.DeviceId;

@@ -7,6 +7,7 @@
     <Application.Resources>
         <vurdalakov:IntegerToObjectConverter Value0="Connected" Value1="Disconnected" Value2="Modified" x:Key="IntegerToWmiEventTypeConverter" />
         <vurdalakov:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <vurdalakov:BooleanToVisibilityConverter Reverse="True" x:Key="BooleanToVisibilityReverseConverter" />
     </Application.Resources>
     
 </Application>

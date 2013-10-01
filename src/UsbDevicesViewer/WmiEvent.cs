@@ -18,7 +18,7 @@
             this.Time = DateTime.Now;
             this.EventType = eventType;
             this.Device = win32UsbControllerDevice;
-            this.HubAndPort = String.Format("{0}:{1}", win32UsbControllerDevice.Hub, win32UsbControllerDevice.Port);
+            this.HubAndPort = Helpers.MakeHubAndPort(win32UsbControllerDevice.Hub, win32UsbControllerDevice.Port);
         }
     }
 }

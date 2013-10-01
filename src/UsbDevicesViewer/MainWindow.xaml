@@ -28,15 +28,18 @@
         <DockPanel Grid.Row="1">
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
-                    <TextBlock Text="Show:" Margin="8,2,4,0" />
-                    <ComboBox ItemsSource="{Binding InterfaceTypes}" DisplayMemberPath="Name" SelectedItem="{Binding InterfaceType}" IsEditable="False" Width="150" Margin="0" />
-                    <Grid>
-                        <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="8,0,4,0" />
-                    </Grid>
-                    <Grid>
+                    <TextBlock Text="Show:" Margin="8,6,4,0" />
+                    <ComboBox ItemsSource="{Binding InterfaceTypes}" DisplayMemberPath="Name" SelectedItem="{Binding InterfaceType}" IsEditable="False" Width="150" Margin="0,0,8,0" />
+                    <Button Margin="8,0,8,0" Command="{Binding RefreshCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="Images/toolbar_refresh.png" Height="24"/>
+                            <TextBlock Text="Refresh" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Grid Margin="8,0,8,0">
                         <CheckBox Content="Refresh on WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" VerticalAlignment="Center" />
                     </Grid>
-                    <Grid>
+                    <Grid Margin="8,0,8,0">
                         <CheckBox Content="Show device interfaces" IsChecked="{Binding ShowDeviceInterfaces}" VerticalAlignment="Center" />
                     </Grid>
                 </ToolBar>
@@ -87,9 +90,9 @@
                     <GridViewColumn Header="Device ID" Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,0,0,0"/>
-                                    <TextBlock Text="{Binding DeviceId}"/>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityReverseConverter}}"/>
+                                    <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,0,0,0" FontStyle="Italic"/>
                                 </StackPanel>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
