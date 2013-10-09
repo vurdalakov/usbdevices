@@ -54,6 +54,8 @@
                 {
                     this.selectedUsbDevice = value;
                     this.OnPropertyChanged(() => this.SelectedUsbDevice);
+
+                    this.SelectedDevice = this.selectedUsbDevice;
                 }
             }
         }
@@ -73,6 +75,8 @@
                 {
                     this.selectedUsbHub = value;
                     this.OnPropertyChanged(() => this.SelectedUsbHub);
+
+                    this.SelectedDevice = this.selectedUsbHub;
                 }
             }
         }
@@ -92,6 +96,8 @@
                 {
                     this.selectedUsbHostController = value;
                     this.OnPropertyChanged(() => this.SelectedUsbHostController);
+
+                    this.SelectedDevice = this.selectedUsbHostController;
                 }
             }
         }
