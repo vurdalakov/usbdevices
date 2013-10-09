@@ -38,6 +38,9 @@
                         <CheckBox Content="Refresh on WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" VerticalAlignment="Center" />
                     </Grid>
                     <Grid Margin="8,0,8,0">
+                        <CheckBox Content="Select connected device" IsChecked="{Binding SelectConnectedDevice}" VerticalAlignment="Center" IsEnabled="{Binding RefreshListOnWmiEvents}" />
+                    </Grid>
+                    <Grid Margin="8,0,8,0">
                         <CheckBox Content="Show device interfaces" IsChecked="{Binding ShowDeviceInterfaces}" VerticalAlignment="Center" />
                     </Grid>
                 </ToolBar>

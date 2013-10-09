@@ -199,6 +199,23 @@
             }
         }
 
+        private Boolean selectConnectedDevice = true;
+        public Boolean SelectConnectedDevice
+        {
+            get
+            {
+                return this.selectConnectedDevice;
+            }
+            set
+            {
+                if (value != this.selectConnectedDevice)
+                {
+                    this.selectConnectedDevice = value;
+                    this.OnPropertyChanged(() => this.SelectConnectedDevice);
+                }
+            }
+        }
+
         private void OnWin32UsbControllerDevicesDeviceConnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
             this.WmiEvents.Insert(0, new WmiEvent(0, e.Device));
@@ -224,7 +241,7 @@
         {
             if (this.RefreshListOnWmiEvents && !String.IsNullOrEmpty(win32UsbControllerDevice.DeviceId) && (win32UsbControllerDevice.DeviceId.IndexOf("&MI_", StringComparison.CurrentCultureIgnoreCase) < 0))
             {
-                this.Refresh();
+                this.Refresh(this.SelectConnectedDevice ? win32UsbControllerDevice.DeviceId : null);
             }
         }
 
