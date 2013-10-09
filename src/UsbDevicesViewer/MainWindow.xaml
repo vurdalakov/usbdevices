@@ -40,9 +40,6 @@
                     <Grid Margin="8,0,8,0">
                         <CheckBox Content="Select connected device" IsChecked="{Binding SelectConnectedDevice}" VerticalAlignment="Center" IsEnabled="{Binding RefreshListOnWmiEvents}" />
                     </Grid>
-                    <Grid Margin="8,0,8,0">
-                        <CheckBox Content="Show device interfaces" IsChecked="{Binding ShowDeviceInterfaces}" VerticalAlignment="Center" />
-                    </Grid>
                 </ToolBar>
             </ToolBarPanel>
         </DockPanel>
@@ -114,8 +111,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityReverseConverter}}"/>
-                                            <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,0,0,0" FontStyle="Italic"/>
+                                            <TextBlock Text="{Binding DeviceId}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -178,8 +174,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityReverseConverter}}"/>
-                                            <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,0,0,0" FontStyle="Italic"/>
+                                            <TextBlock Text="{Binding DeviceId}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -218,8 +213,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityReverseConverter}}"/>
-                                            <TextBlock Text="{Binding DeviceId}" Visibility="{Binding IsInterface, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="20,0,0,0" FontStyle="Italic"/>
+                                            <TextBlock Text="{Binding DeviceId}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -376,6 +370,27 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Header="Value" Width="Auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </TabItem>
+
+            <TabItem Header="Device Interfaces">
+                <ListView ItemsSource="{Binding SelectedDevice.Interfaces}" SelectedItem="{Binding SelectedInterface, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,4,0,-4.4">
+                    <ListView.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Copy Interface ID" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="4001"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="true">
+                            <GridViewColumn Header="Interface ID" Width="Auto">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Value}"/>

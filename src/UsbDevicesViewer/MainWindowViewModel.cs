@@ -153,7 +153,22 @@
             }
         }
 
-        private Win32UsbControllerDevices win32UsbControllerDevices = new Win32UsbControllerDevices();
+        private NameValueTypeViewModel selectedInterface;
+        public NameValueTypeViewModel SelectedInterface
+        {
+            get
+            {
+                return this.selectedInterface;
+            }
+            set
+            {
+                if (value != this.selectedInterface)
+                {
+                    this.selectedInterface = value;
+                    this.OnPropertyChanged(() => this.SelectedInterface);
+                }
+            }
+        }
 
         public MainWindowViewModel()
         {
@@ -168,23 +183,30 @@
             this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
             this.ClearWmiEventsCommand = new CommandBase<String>(this.OnClearWmiEventsCommand);
 
-            this.win32UsbControllerDevices.DeviceConnected += OnWin32UsbControllerDevicesDeviceConnected;
-            this.win32UsbControllerDevices.DeviceDisconnected += OnWin32UsbControllerDevicesDeviceDisconnected;
-            this.win32UsbControllerDevices.DeviceModified += OnWin32UsbControllerDevicesDeviceModified;
             this.EnableWmiWatcher(true);
         }
 
         #region WMI events
 
+        private Win32UsbControllerDevices win32UsbControllerDevices = new Win32UsbControllerDevices();
+
         private void EnableWmiWatcher(Boolean enable)
         {
             if (enable)
             {
+                this.win32UsbControllerDevices.DeviceConnected += OnWin32UsbControllerDevicesDeviceConnected;
+                this.win32UsbControllerDevices.DeviceDisconnected += OnWin32UsbControllerDevicesDeviceDisconnected;
+                this.win32UsbControllerDevices.DeviceModified += OnWin32UsbControllerDevicesDeviceModified;
+
                 this.win32UsbControllerDevices.StartWatcher();
             }
             else
             {
                 this.win32UsbControllerDevices.StopWatcher();
+
+                this.win32UsbControllerDevices.DeviceConnected -= OnWin32UsbControllerDevicesDeviceConnected;
+                this.win32UsbControllerDevices.DeviceDisconnected -= OnWin32UsbControllerDevicesDeviceDisconnected;
+                this.win32UsbControllerDevices.DeviceModified -= OnWin32UsbControllerDevicesDeviceModified;
             }
         }
 
@@ -323,14 +345,6 @@
             foreach (UsbDevice usbDevice in usbDevices)
             {
                 usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice));
-
-                if (this.ShowDeviceInterfaces)
-                {
-                    foreach (String interfaceId in usbDevice.InterfaceIds)
-                    {
-                        usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice, interfaceId));
-                    }
-                }
             }
 
             deviceList.AddRange(usbDeviceViewModels);
@@ -445,28 +459,12 @@
                     case "3003":
                         Clipboard.SetText(this.SelectedRegistryProperty.Value as String);
                         break;
+                    case "4001":
+                        Clipboard.SetText(this.SelectedInterface.Value as String);
+                        break;
                 }
             }
             catch { }
-        }
-
-        private Boolean showDeviceInterfaces = false;
-        public Boolean ShowDeviceInterfaces
-        {
-            get
-            {
-                return this.showDeviceInterfaces;
-            }
-            set
-            {
-                if (value != this.showDeviceInterfaces)
-                {
-                    this.showDeviceInterfaces = value;
-                    this.OnPropertyChanged(() => this.ShowDeviceInterfaces);
-
-                    this.Refresh();
-                }
-            }
         }
 
         private String propertiesHeight = "3*";

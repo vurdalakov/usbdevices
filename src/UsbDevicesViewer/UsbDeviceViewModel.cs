@@ -14,32 +14,19 @@
         public String DevicePath { get; private set; }
         public String Description { get; private set; }
 
-        public Boolean IsInterface { get; private set; }
-
         public ThreadSafeObservableCollection<NameValueTypeViewModel> Properties { get; private set; }
 
         public ThreadSafeObservableCollection<NameValueTypeViewModel> RegistryProperties { get; private set; }
+
+        public ThreadSafeObservableCollection<NameValueTypeViewModel> Interfaces { get; private set; }
 
         public UsbDeviceViewModel(UsbDevice usbDevice)
         {
             this.Properties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
             this.RegistryProperties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
-
-            this.IsInterface = false;
+            this.Interfaces = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
 
             this.Refresh(usbDevice);
-        }
-
-        public UsbDeviceViewModel(UsbDevice usbDevice, String interfaceId) : this(usbDevice)
-        {
-            this.Vid = String.Empty;
-            this.Pid = String.Empty;
-            this.HubAndPort = String.Empty;
-            this.DeviceId = interfaceId;
-            this.DevicePath = String.Empty;
-            this.Description = String.Empty;
-
-            this.IsInterface = true;
         }
 
         public void Refresh(UsbDevice usbDevice)
@@ -86,6 +73,12 @@
                 {
                     this.RegistryProperties.Add(new NameValueTypeViewModel(String.Empty, values[i], String.Empty));
                 }
+            }
+
+            this.Interfaces.Clear();
+            foreach (String interfaceId in usbDevice.InterfaceIds)
+            {
+                this.Interfaces.Add(new NameValueTypeViewModel(String.Empty, interfaceId, String.Empty));
             }
         }
     }
