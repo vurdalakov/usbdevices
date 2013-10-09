@@ -49,8 +49,8 @@
 
         public ThreadSafeObservableCollection<UsbDeviceViewModel> UsbHubs { get; private set; }
 
-        private UsbDeviceViewModel SelectedUsbHub;
-        public UsbDeviceViewModel selectedUsbHub
+        private UsbDeviceViewModel selectedUsbHub;
+        public UsbDeviceViewModel SelectedUsbHub
         {
             get
             {
@@ -223,59 +223,12 @@
 
         public void Refresh(String deviceId = null)
         {
-            if (null == this.InterfaceType)
-            {
-                this.InterfaceType = this.InterfaceTypes[2];
-                return;
-            }
-
-            if (String.IsNullOrEmpty(deviceId) && (this.SelectedUsbDevice != null))
-            {
-                deviceId = this.SelectedUsbDevice.DeviceId;
-            }
-
-            this.UsbDevices.Clear();
-
-            UsbDevice[] usbDevices = UsbDevice.GetDevices(new Guid(this.InterfaceType.Value as String));
-
-            List<UsbDeviceViewModel> usbDeviceViewModels = new List<UsbDeviceViewModel>();
-            foreach (UsbDevice usbDevice in usbDevices)
-            {
-                usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice));
-
-                if (this.ShowDeviceInterfaces)
-                {
-                    foreach (String interfaceId in usbDevice.InterfaceIds)
-                    {
-                        usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice, interfaceId));
-                    }
-                }
-            }
-
-            this.UsbDevices.AddRange(usbDeviceViewModels);
-
-            if (!String.IsNullOrEmpty(deviceId))
-            {
-                foreach (UsbDeviceViewModel usbDeviceViewModel in this.UsbDevices)
-                {
-                    if (usbDeviceViewModel.DeviceId.Equals(deviceId, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        this.SelectedUsbDevice = usbDeviceViewModel;
-                        return;
-                    }
-                }
-            }
-            
-            if (this.UsbDevices.Count > 0)
-            {
-                this.SelectedUsbDevice = this.UsbDevices[0];
-            }
-
-            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB, this.UsbHubs, this.SelectedUsbHub);
-            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER, this.UsbHostControllers, this.SelectedUsbHostController);
+            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE, this.UsbDevices, this.SelectedUsbDevice, d => this.SelectedUsbDevice = d, deviceId);
+            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB, this.UsbHubs, this.SelectedUsbHub, d => this.SelectedUsbHub = d);
+            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER, this.UsbHostControllers, this.SelectedUsbHostController, d => this.SelectedUsbHostController = d);
         }
 
-        private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, String deviceId = null)
+        private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, Action<UsbDeviceViewModel> setSelectedDevice, String deviceId = null)
         {
             if (String.IsNullOrEmpty(deviceId))
             {
@@ -315,7 +268,7 @@
                 {
                     if (usbDeviceViewModel.DeviceId.Equals(deviceId, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        selectedDevice = usbDeviceViewModel;
+                        setSelectedDevice(usbDeviceViewModel);
                         return;
                     }
                 }
@@ -323,7 +276,7 @@
 
             if (deviceList.Count > 0)
             {
-                selectedDevice = deviceList[0];
+                setSelectedDevice(deviceList[0]);
             }
         }
 
