@@ -28,8 +28,6 @@
         <DockPanel Grid.Row="1">
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
-                    <TextBlock Text="Show:" Margin="8,6,4,0" />
-                    <ComboBox ItemsSource="{Binding InterfaceTypes}" DisplayMemberPath="Name" SelectedItem="{Binding InterfaceType}" IsEditable="False" Width="150" Margin="0,0,8,0" />
                     <Button Margin="8,0,8,0" Command="{Binding RefreshCommand}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="Images/toolbar_refresh.png" Height="24"/>
@@ -46,7 +44,7 @@
             </ToolBarPanel>
         </DockPanel>
 
-        <TabControl Grid.Row="2">
+        <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedDeviceType}">
 
             <TabItem Header="USB Devices">
                 <ListView ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
@@ -223,7 +221,7 @@
         <TabControl Grid.Row="4">
             
             <TabItem Header="Device Properties">
-                <ListView ItemsSource="{Binding SelectedUsbDevice.Properties}" SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,2,0,-2">
+                <ListView ItemsSource="{Binding SelectedDevice.Properties}" SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,2,0,-2">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                             <MenuItem Header="Copy Name" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="2001"/>
@@ -260,7 +258,7 @@
             </TabItem>
 
             <TabItem Header="Device Registry Properties">
-                <ListView ItemsSource="{Binding SelectedUsbDevice.RegistryProperties}" SelectedItem="{Binding SelectedRegistryProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
+                <ListView ItemsSource="{Binding SelectedDevice.RegistryProperties}" SelectedItem="{Binding SelectedRegistryProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                             <MenuItem Header="Copy Name" Command="{Binding PlacementTarget.Tag.CopyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" CommandParameter="3001"/>

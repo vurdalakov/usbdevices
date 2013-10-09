@@ -10,20 +10,29 @@
 
     public class MainWindowViewModel : ViewModelBase
     {
-        public ThreadSafeObservableCollection<NameValueViewModel> InterfaceTypes { get; set; }
-
-        private NameValueViewModel interfaceType;
-        public NameValueViewModel InterfaceType
+        private Int32 selectedDeviceType;
+        public Int32 SelectedDeviceType
         {
-            get { return this.interfaceType; }
+            get { return this.selectedDeviceType; }
             set
             {
-                if (this.interfaceType != value)
+                if (this.selectedDeviceType != value)
                 {
-                    this.interfaceType = value;
-                    this.OnPropertyChanged(() => this.InterfaceType);
+                    this.selectedDeviceType = value;
+                    this.OnPropertyChanged(() => this.SelectedDeviceType);
+                }
 
-                    this.Refresh();
+                switch (this.selectedDeviceType)
+                {
+                    case 0:
+                        this.SelectedDevice = this.SelectedUsbDevice;
+                        break;
+                    case 1:
+                        this.SelectedDevice = this.SelectedUsbHub;
+                        break;
+                    case 2:
+                        this.SelectedDevice = this.SelectedUsbHostController;
+                        break;
                 }
             }
         }
@@ -85,6 +94,23 @@
             }
         }
 
+        private UsbDeviceViewModel selectedDevice;
+        public UsbDeviceViewModel SelectedDevice
+        {
+            get
+            {
+                return this.selectedDevice;
+            }
+            set
+            {
+                if (value != this.selectedDevice)
+                {
+                    this.selectedDevice = value;
+                    this.OnPropertyChanged(() => this.SelectedDevice);
+                }
+            }
+        }
+
         private NameValueTypeViewModel selectedProperty;
         public NameValueTypeViewModel SelectedProperty
         {
@@ -123,11 +149,6 @@
 
         public MainWindowViewModel()
         {
-            this.InterfaceTypes = new ThreadSafeObservableCollection<NameValueViewModel>();
-            this.InterfaceTypes.Add(new NameValueViewModel("USB Host Controllers", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER));
-            this.InterfaceTypes.Add(new NameValueViewModel("USB Hubs", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB));
-            this.InterfaceTypes.Add(new NameValueViewModel("USB Devices", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE));
-
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
             this.UsbHubs = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
             this.UsbHostControllers = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
@@ -226,6 +247,11 @@
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE, this.UsbDevices, this.SelectedUsbDevice, d => this.SelectedUsbDevice = d, deviceId);
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB, this.UsbHubs, this.SelectedUsbHub, d => this.SelectedUsbHub = d);
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER, this.UsbHostControllers, this.SelectedUsbHostController, d => this.SelectedUsbHostController = d);
+
+            if (null == this.SelectedDevice)
+            {
+                this.SelectedDeviceType = this.SelectedDeviceType;
+            }
         }
 
         private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, Action<UsbDeviceViewModel> setSelectedDevice, String deviceId = null)
