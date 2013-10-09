@@ -230,6 +230,23 @@
 
         public ThreadSafeObservableCollection<WmiEvent> WmiEvents { get; set; }
 
+        private WmiEvent selectedWmiEvent;
+        public WmiEvent SelectedWmiEvent
+        {
+            get
+            {
+                return this.selectedWmiEvent;
+            }
+            set
+            {
+                if (value != this.selectedWmiEvent)
+                {
+                    this.selectedWmiEvent = value;
+                    this.OnPropertyChanged(() => this.SelectedWmiEvent);
+                }
+            }
+        }
+
         public ICommand ClearWmiEventsCommand { get; private set; }
         public void OnClearWmiEventsCommand(String source)
         {
@@ -311,45 +328,98 @@
         public ICommand CopyCommand { get; private set; }
         public void OnCopyCommand(String source)
         {
-            switch (source)
+            try // too lazy to check for null
             {
-                case "1001":
-                    Clipboard.SetText(this.SelectedUsbDevice.Vid);
-                    break;
-                case "1002":
-                    Clipboard.SetText(this.SelectedUsbDevice.Pid);
-                    break;
-                case "1003":
-                    Clipboard.SetText(this.SelectedUsbDevice.HubAndPort);
-                    break;
-                case "1004":
-                    Clipboard.SetText(this.SelectedUsbDevice.Description);
-                    break;
-                case "1005":
-                    Clipboard.SetText(this.SelectedUsbDevice.DeviceId);
-                    break;
-                case "1006":
-                    Clipboard.SetText(this.SelectedUsbDevice.DevicePath);
-                    break;
-                case "2001":
-                    Clipboard.SetText(this.SelectedProperty.Name);
-                    break;
-                case "2002":
-                    Clipboard.SetText(this.SelectedProperty.Type as String);
-                    break;
-                case "2003":
-                    Clipboard.SetText(this.SelectedProperty.Value as String);
-                    break;
-                case "3001":
-                    Clipboard.SetText(this.SelectedRegistryProperty.Name);
-                    break;
-                case "3002":
-                    Clipboard.SetText(this.SelectedRegistryProperty.Type as String);
-                    break;
-                case "3003":
-                    Clipboard.SetText(this.SelectedRegistryProperty.Value as String);
-                    break;
+                switch (source)
+                {
+                    case "1001":
+                        Clipboard.SetText(this.SelectedUsbDevice.Vid);
+                        break;
+                    case "1002":
+                        Clipboard.SetText(this.SelectedUsbDevice.Pid);
+                        break;
+                    case "1003":
+                        Clipboard.SetText(this.SelectedUsbDevice.HubAndPort);
+                        break;
+                    case "1004":
+                        Clipboard.SetText(this.SelectedUsbDevice.Description);
+                        break;
+                    case "1005":
+                        Clipboard.SetText(this.SelectedUsbDevice.DeviceId);
+                        break;
+                    case "1006":
+                        Clipboard.SetText(this.SelectedUsbDevice.DevicePath);
+                        break;
+                    case "1101":
+                        Clipboard.SetText(this.SelectedUsbHub.Vid);
+                        break;
+                    case "1102":
+                        Clipboard.SetText(this.SelectedUsbHub.Pid);
+                        break;
+                    case "1103":
+                        Clipboard.SetText(this.SelectedUsbHub.HubAndPort);
+                        break;
+                    case "1104":
+                        Clipboard.SetText(this.SelectedUsbHub.Description);
+                        break;
+                    case "1105":
+                        Clipboard.SetText(this.SelectedUsbHub.DeviceId);
+                        break;
+                    case "1106":
+                        Clipboard.SetText(this.SelectedUsbHub.DevicePath);
+                        break;
+                    case "1204":
+                        Clipboard.SetText(this.SelectedUsbHostController.Description);
+                        break;
+                    case "1205":
+                        Clipboard.SetText(this.SelectedUsbHostController.DeviceId);
+                        break;
+                    case "1206":
+                        Clipboard.SetText(this.SelectedUsbHostController.DevicePath);
+                        break;
+                    case "1301":
+                        Clipboard.SetText(this.SelectedWmiEvent.Time.ToString("HH:mm:ss.ffff"));
+                        break;
+                    case "1302":
+                        String[] eventTypes = { "Connected", "Disconnected", "Modified" };
+                        Clipboard.SetText(eventTypes[this.SelectedWmiEvent.EventType]);
+                        break;
+                    case "1303":
+                        Clipboard.SetText(this.SelectedWmiEvent.Device.Vid);
+                        break;
+                    case "1304":
+                        Clipboard.SetText(this.SelectedWmiEvent.Device.Pid);
+                        break;
+                    case "1305":
+                        Clipboard.SetText(this.SelectedWmiEvent.HubAndPort);
+                        break;
+                    case "1306":
+                        Clipboard.SetText(this.SelectedWmiEvent.Device.DeviceId);
+                        break;
+                    case "1307":
+                        Clipboard.SetText(this.SelectedWmiEvent.Device.ControllerId);
+                        break;
+                    case "2001":
+                        Clipboard.SetText(this.SelectedProperty.Name);
+                        break;
+                    case "2002":
+                        Clipboard.SetText(this.SelectedProperty.Type as String);
+                        break;
+                    case "2003":
+                        Clipboard.SetText(this.SelectedProperty.Value as String);
+                        break;
+                    case "3001":
+                        Clipboard.SetText(this.SelectedRegistryProperty.Name);
+                        break;
+                    case "3002":
+                        Clipboard.SetText(this.SelectedRegistryProperty.Type as String);
+                        break;
+                    case "3003":
+                        Clipboard.SetText(this.SelectedRegistryProperty.Value as String);
+                        break;
+                }
             }
+            catch { }
         }
 
         private Boolean showDeviceInterfaces = false;
