@@ -65,7 +65,14 @@
                 </ControlTemplate>
             </TabControl.Template>
 
-            <TabItem Header="USB Devices">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="USB Devices ("/>
+                        <Run Text="{Binding UsbDevices.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -128,7 +135,14 @@
                 </ListView>
             </TabItem>
 
-            <TabItem Header="USB Hubs">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="USB Hubs ("/>
+                        <Run Text="{Binding UsbHubs.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbHubs}" SelectedItem="{Binding SelectedUsbHub, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -191,7 +205,14 @@
                 </ListView>
             </TabItem>
 
-            <TabItem Header="USB Host Controllers">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="USB Host Controllers ("/>
+                        <Run Text="{Binding UsbHostControllers.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbHostControllers}" SelectedItem="{Binding SelectedUsbHostController, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -230,7 +251,14 @@
                 </ListView>
             </TabItem>
 
-            <TabItem Header="WMI Events" HorizontalAlignment="Right" DockPanel.Dock="Right">
+            <TabItem HorizontalAlignment="Right" DockPanel.Dock="Right">
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="WMI Events ("/>
+                        <Run Text="{Binding WmiEvents.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding WmiEvents}" SelectedItem="{Binding SelectedWmiEvent, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -307,7 +335,14 @@
 
         <TabControl Grid.Row="4">
             
-            <TabItem Header="Device Properties">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="Device Properties ("/>
+                        <Run Text="{Binding SelectedDevice.Properties.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding SelectedDevice.Properties}" SelectedItem="{Binding SelectedProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,2,0,-2">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -344,7 +379,14 @@
                 </ListView>
             </TabItem>
 
-            <TabItem Header="Device Registry Properties">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="Device Registry Properties ("/>
+                        <Run Text="{Binding SelectedDevice.RegistryProperties.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding SelectedDevice.RegistryProperties}" SelectedItem="{Binding SelectedRegistryProperty, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -381,7 +423,14 @@
                 </ListView>
             </TabItem>
 
-            <TabItem Header="Device Interfaces">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock>
+                        <Run Text="Device Interfaces ("/>
+                        <Run Text="{Binding SelectedDevice.Interfaces.Count, Mode=OneWay}"/>
+                        <Run Text=")"/>
+                    </TextBlock>
+                </TabItem.Header>
                 <ListView ItemsSource="{Binding SelectedDevice.Interfaces}" SelectedItem="{Binding SelectedInterface, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" Margin="0,4,0,-4.4">
                     <ListView.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
