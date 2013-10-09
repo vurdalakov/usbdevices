@@ -278,6 +278,8 @@
             this.Refresh();
         }
 
+        public String Summary { get; private set; }
+
         public void Refresh(String deviceId = null)
         {
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE, this.UsbDevices, this.SelectedUsbDevice, d => this.SelectedUsbDevice = d, deviceId);
@@ -288,6 +290,9 @@
             {
                 this.SelectedDeviceType = this.SelectedDeviceType;
             }
+
+            this.Summary = String.Format("{0:N0} USB devices, {1:N0} USB hubs and {2:N0} USB host controllers", this.UsbDevices.Count, this.UsbHubs.Count, this.UsbHostControllers.Count);
+            this.OnPropertyChanged(() => this.Summary);
         }
 
         private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, Action<UsbDeviceViewModel> setSelectedDevice, String deviceId = null)

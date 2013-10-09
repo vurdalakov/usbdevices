@@ -392,10 +392,7 @@
         <StatusBar Grid.Row="5" HorizontalAlignment="Stretch">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock>
-                        <Run Text="{Binding UsbDevices.Count, StringFormat=N0, Mode=OneWay}" />
-                        <Run Text="USB device(s) found" />
-                    </TextBlock>
+                    <TextBlock Text="{Binding Summary}" />
                 </StackPanel>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
