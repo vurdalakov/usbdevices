@@ -47,6 +47,44 @@
             }
         }
 
+        public ThreadSafeObservableCollection<UsbDeviceViewModel> UsbHubs { get; private set; }
+
+        private UsbDeviceViewModel SelectedUsbHub;
+        public UsbDeviceViewModel selectedUsbHub
+        {
+            get
+            {
+                return this.selectedUsbHub;
+            }
+            set
+            {
+                if (value != this.selectedUsbHub)
+                {
+                    this.selectedUsbHub = value;
+                    this.OnPropertyChanged(() => this.SelectedUsbHub);
+                }
+            }
+        }
+
+        public ThreadSafeObservableCollection<UsbDeviceViewModel> UsbHostControllers { get; private set; }
+
+        private UsbDeviceViewModel selectedUsbHostController;
+        public UsbDeviceViewModel SelectedUsbHostController
+        {
+            get
+            {
+                return this.selectedUsbHostController;
+            }
+            set
+            {
+                if (value != this.selectedUsbHostController)
+                {
+                    this.selectedUsbHostController = value;
+                    this.OnPropertyChanged(() => this.SelectedUsbHostController);
+                }
+            }
+        }
+
         private NameValueTypeViewModel selectedProperty;
         public NameValueTypeViewModel SelectedProperty
         {
@@ -91,6 +129,8 @@
             this.InterfaceTypes.Add(new NameValueViewModel("USB Devices", UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE));
 
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
+            this.UsbHubs = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
+            this.UsbHostControllers = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
             this.WmiEvents = new ThreadSafeObservableCollection<WmiEvent>();
 
@@ -229,6 +269,61 @@
             if (this.UsbDevices.Count > 0)
             {
                 this.SelectedUsbDevice = this.UsbDevices[0];
+            }
+
+            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB, this.UsbHubs, this.SelectedUsbHub);
+            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER, this.UsbHostControllers, this.SelectedUsbHostController);
+        }
+
+        private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, String deviceId = null)
+        {
+            if (String.IsNullOrEmpty(deviceId))
+            {
+                if (selectedDevice != null)
+                {
+                    deviceId = selectedDevice.DeviceId;
+                }
+                else if (deviceList.Count > 0)
+                {
+                    deviceId = deviceList[0].DeviceId;
+                }
+            }
+
+            deviceList.Clear();
+
+            UsbDevice[] usbDevices = UsbDevice.GetDevices(new Guid(guid));
+
+            List<UsbDeviceViewModel> usbDeviceViewModels = new List<UsbDeviceViewModel>();
+            foreach (UsbDevice usbDevice in usbDevices)
+            {
+                usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice));
+
+                if (this.ShowDeviceInterfaces)
+                {
+                    foreach (String interfaceId in usbDevice.InterfaceIds)
+                    {
+                        usbDeviceViewModels.Add(new UsbDeviceViewModel(usbDevice, interfaceId));
+                    }
+                }
+            }
+
+            deviceList.AddRange(usbDeviceViewModels);
+
+            if (!String.IsNullOrEmpty(deviceId))
+            {
+                foreach (UsbDeviceViewModel usbDeviceViewModel in deviceList)
+                {
+                    if (usbDeviceViewModel.DeviceId.Equals(deviceId, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        selectedDevice = usbDeviceViewModel;
+                        return;
+                    }
+                }
+            }
+
+            if (deviceList.Count > 0)
+            {
+                selectedDevice = deviceList[0];
             }
         }
 
