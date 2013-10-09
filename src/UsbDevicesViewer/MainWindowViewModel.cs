@@ -34,6 +34,8 @@
                         this.SelectedDevice = this.SelectedUsbHostController;
                         break;
                 }
+
+                this.PropertiesHeight = 3 == this.selectedDeviceType ? "0" : "3*";
             }
         }
 
@@ -350,7 +352,6 @@
             }
         }
 
-
         private Boolean showDeviceInterfaces = false;
         public Boolean ShowDeviceInterfaces
         {
@@ -366,6 +367,20 @@
                     this.OnPropertyChanged(() => this.ShowDeviceInterfaces);
 
                     this.Refresh();
+                }
+            }
+        }
+
+        private String propertiesHeight = "3*";
+        public String PropertiesHeight
+        {
+            get { return this.propertiesHeight; }
+            set
+            {
+                if (this.propertiesHeight != value)
+                {
+                    this.propertiesHeight = value;
+                    this.OnPropertyChanged(() => this.PropertiesHeight);
                 }
             }
         }
