@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UsbDevices")]
-[assembly: AssemblyDescription("Lists all USB devices attached to local computer")]
+[assembly: AssemblyDescription("Lists all USB devices, hubs and controllers that are attached to the local computer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Vurdalakov")]
-[assembly: AssemblyProduct("UsbDevices")]
+[assembly: AssemblyProduct("UsbDevicesDotNet")]
 [assembly: AssemblyCopyright("Copyright © 2013 Vurdalakov")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -33,4 +33,3 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
