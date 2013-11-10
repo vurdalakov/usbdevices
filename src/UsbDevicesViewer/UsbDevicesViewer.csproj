@@ -58,7 +58,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DeviceManagementNotifications\DeviceManagementNotificationsEventArgs.cs" />
+    <Compile Include="DeviceManagementNotifications\DeviceManagementNotifications.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="DeviceManagementNotifications\MessageOnlyWindow.cs" />
     <Compile Include="UsbDeviceViewModel.cs" />
     <Compile Include="Vurdalakov\BooleanToObjectConverter.cs" />
     <Compile Include="Vurdalakov\BooleanToVisibilityConverter.cs" />
@@ -72,7 +75,7 @@
     <Compile Include="Win32UsbControllerDevice.cs" />
     <Compile Include="Win32UsbControllerDeviceEventArgs.cs" />
     <Compile Include="Win32UsbControllerDevices.cs" />
-    <Compile Include="WmiEvent.cs" />
+    <Compile Include="DeviceEvent.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

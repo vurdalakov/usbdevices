@@ -176,21 +176,27 @@
             this.UsbHubs = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
             this.UsbHostControllers = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
-            this.WmiEvents = new ThreadSafeObservableCollection<WmiEvent>();
+            this.DeviceEvents = new ThreadSafeObservableCollection<DeviceEvent>();
 
             this.RefreshCommand = new CommandBase(this.OnRefreshCommand);
 
             this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
-            this.ClearWmiEventsCommand = new CommandBase<String>(this.OnClearWmiEventsCommand);
+            this.ClearDeviceEventsCommand = new CommandBase<String>(this.OnClearDeviceEventsCommand);
 
-            this.EnableWmiWatcher(true);
+            this.EnableDeviceWatcher(true);
         }
 
-        #region WMI events
+        public void Close()
+        {
+            this.EnableDeviceWatcher(false);
+        }
+
+        #region Device events
 
         private Win32UsbControllerDevices win32UsbControllerDevices = new Win32UsbControllerDevices();
+        private DeviceManagementNotifications deviceManagementNotifications = new DeviceManagementNotifications();
 
-        private void EnableWmiWatcher(Boolean enable)
+        private void EnableDeviceWatcher(Boolean enable)
         {
             if (enable)
             {
@@ -199,9 +205,19 @@
                 this.win32UsbControllerDevices.DeviceModified += OnWin32UsbControllerDevicesDeviceModified;
 
                 this.win32UsbControllerDevices.StartWatcher();
+
+                this.deviceManagementNotifications.DeviceConnected += OnDeviceManagementNotificationsDeviceConnected;
+                this.deviceManagementNotifications.DeviceDisconnected += OnDeviceManagementNotificationsDeviceDisconnected;
+
+                this.deviceManagementNotifications.Start(new Guid(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE));
             }
             else
             {
+                this.deviceManagementNotifications.Stop();
+
+                this.deviceManagementNotifications.DeviceConnected -= OnDeviceManagementNotificationsDeviceConnected;
+                this.deviceManagementNotifications.DeviceDisconnected -= OnDeviceManagementNotificationsDeviceDisconnected;
+
                 this.win32UsbControllerDevices.StopWatcher();
 
                 this.win32UsbControllerDevices.DeviceConnected -= OnWin32UsbControllerDevicesDeviceConnected;
@@ -210,7 +226,24 @@
             }
         }
 
-        private Boolean refreshListOnWmiEvents = true;
+        private Boolean refreshListOnDeviceManagementEvents = true;
+        public Boolean RefreshListOnDeviceManagementEvents
+        {
+            get
+            {
+                return this.refreshListOnDeviceManagementEvents;
+            }
+            set
+            {
+                if (value != this.refreshListOnDeviceManagementEvents)
+                {
+                    this.refreshListOnDeviceManagementEvents = value;
+                    this.OnPropertyChanged(() => this.RefreshListOnDeviceManagementEvents);
+                }
+            }
+        }
+
+        private Boolean refreshListOnWmiEvents = false;
         public Boolean RefreshListOnWmiEvents
         {
             get
@@ -246,21 +279,21 @@
 
         private void OnWin32UsbControllerDevicesDeviceConnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.WmiEvents.Insert(0, new WmiEvent(0, e.Device));
+            this.DeviceEvents.Insert(0, new DeviceEvent(0, e.Device));
 
             this.RefreshOnWmiEvent(e.Device);
         }
 
         private void OnWin32UsbControllerDevicesDeviceDisconnected(Object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.WmiEvents.Insert(0, new WmiEvent(1, e.Device));
+            this.DeviceEvents.Insert(0, new DeviceEvent(1, e.Device));
 
             this.RefreshOnWmiEvent(e.Device);
         }
 
         private void OnWin32UsbControllerDevicesDeviceModified(object sender, Win32UsbControllerDeviceEventArgs e)
         {
-            this.WmiEvents.Insert(0, new WmiEvent(2, e.Device));
+            this.DeviceEvents.Insert(0, new DeviceEvent(2, e.Device));
 
             this.RefreshOnWmiEvent(e.Device);
         }
@@ -273,29 +306,51 @@
             }
         }
 
-        public ThreadSafeObservableCollection<WmiEvent> WmiEvents { get; set; }
+        private void OnDeviceManagementNotificationsDeviceConnected(Object sender, DeviceManagementNotificationsEventArgs e)
+        {
+            this.DeviceEvents.Insert(0, new DeviceEvent(3, e.DevicePath));
 
-        private WmiEvent selectedWmiEvent;
-        public WmiEvent SelectedWmiEvent
+            this.RefreshOnDeviceManagementEvent(e.DevicePath);
+        }
+
+        private void OnDeviceManagementNotificationsDeviceDisconnected(Object sender, DeviceManagementNotificationsEventArgs e)
+        {
+            this.DeviceEvents.Insert(0, new DeviceEvent(4, e.DevicePath));
+
+            this.RefreshOnDeviceManagementEvent(e.DevicePath);
+        }
+
+        private void RefreshOnDeviceManagementEvent(String devicePath)
+        {
+            if (this.RefreshListOnDeviceManagementEvents && !String.IsNullOrEmpty(devicePath))
+            {
+                this.Refresh(null, this.SelectConnectedDevice ? devicePath : null);
+            }
+        }
+
+        public ThreadSafeObservableCollection<DeviceEvent> DeviceEvents { get; set; }
+
+        private DeviceEvent selectedDeviceEvent;
+        public DeviceEvent SelectedDeviceEvent
         {
             get
             {
-                return this.selectedWmiEvent;
+                return this.selectedDeviceEvent;
             }
             set
             {
-                if (value != this.selectedWmiEvent)
+                if (value != this.selectedDeviceEvent)
                 {
-                    this.selectedWmiEvent = value;
-                    this.OnPropertyChanged(() => this.SelectedWmiEvent);
+                    this.selectedDeviceEvent = value;
+                    this.OnPropertyChanged(() => this.SelectedDeviceEvent);
                 }
             }
         }
 
-        public ICommand ClearWmiEventsCommand { get; private set; }
-        public void OnClearWmiEventsCommand(String source)
+        public ICommand ClearDeviceEventsCommand { get; private set; }
+        public void OnClearDeviceEventsCommand(String source)
         {
-            this.WmiEvents.Clear();
+            this.DeviceEvents.Clear();
         }
 
         #endregion
@@ -308,9 +363,9 @@
 
         public String Summary { get; private set; }
 
-        public void Refresh(String deviceId = null)
+        public void Refresh(String deviceId = null, String devicePath = null)
         {
-            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE, this.UsbDevices, this.SelectedUsbDevice, d => this.SelectedUsbDevice = d, deviceId);
+            this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE, this.UsbDevices, this.SelectedUsbDevice, d => this.SelectedUsbDevice = d, deviceId, devicePath);
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB, this.UsbHubs, this.SelectedUsbHub, d => this.SelectedUsbHub = d);
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER, this.UsbHostControllers, this.SelectedUsbHostController, d => this.SelectedUsbHostController = d);
 
@@ -323,9 +378,9 @@
             this.OnPropertyChanged(() => this.Summary);
         }
 
-        private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, Action<UsbDeviceViewModel> setSelectedDevice, String deviceId = null)
+        private void Refresh(String guid, ThreadSafeObservableCollection<UsbDeviceViewModel> deviceList, UsbDeviceViewModel selectedDevice, Action<UsbDeviceViewModel> setSelectedDevice, String deviceId = null, String devicePath = null)
         {
-            if (String.IsNullOrEmpty(deviceId))
+            if (String.IsNullOrEmpty(deviceId) && String.IsNullOrEmpty(devicePath))
             {
                 if (selectedDevice != null)
                 {
@@ -354,6 +409,18 @@
                 foreach (UsbDeviceViewModel usbDeviceViewModel in deviceList)
                 {
                     if (usbDeviceViewModel.DeviceId.Equals(deviceId, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        setSelectedDevice(usbDeviceViewModel);
+                        return;
+                    }
+                }
+            }
+
+            if (!String.IsNullOrEmpty(devicePath))
+            {
+                foreach (UsbDeviceViewModel usbDeviceViewModel in deviceList)
+                {
+                    if (usbDeviceViewModel.DevicePath.Equals(devicePath, StringComparison.CurrentCultureIgnoreCase))
                     {
                         setSelectedDevice(usbDeviceViewModel);
                         return;
@@ -420,26 +487,26 @@
                         Clipboard.SetText(this.SelectedUsbHostController.DevicePath);
                         break;
                     case "1301":
-                        Clipboard.SetText(this.SelectedWmiEvent.Time.ToString("HH:mm:ss.ffff"));
+                        Clipboard.SetText(this.SelectedDeviceEvent.Time.ToString("HH:mm:ss.ffff"));
                         break;
                     case "1302":
                         String[] eventTypes = { "Connected", "Disconnected", "Modified" };
-                        Clipboard.SetText(eventTypes[this.SelectedWmiEvent.EventType]);
+                        Clipboard.SetText(eventTypes[this.SelectedDeviceEvent.EventType]);
                         break;
                     case "1303":
-                        Clipboard.SetText(this.SelectedWmiEvent.Device.Vid);
+                        Clipboard.SetText(this.SelectedDeviceEvent.Vid);
                         break;
                     case "1304":
-                        Clipboard.SetText(this.SelectedWmiEvent.Device.Pid);
+                        Clipboard.SetText(this.SelectedDeviceEvent.Pid);
                         break;
                     case "1305":
-                        Clipboard.SetText(this.SelectedWmiEvent.HubAndPort);
+                        Clipboard.SetText(this.SelectedDeviceEvent.HubAndPort);
                         break;
                     case "1306":
-                        Clipboard.SetText(this.SelectedWmiEvent.Device.DeviceId);
+                        Clipboard.SetText(this.SelectedDeviceEvent.DeviceId);
                         break;
                     case "1307":
-                        Clipboard.SetText(this.SelectedWmiEvent.Device.ControllerId);
+                        Clipboard.SetText(this.SelectedDeviceEvent.ControllerId);
                         break;
                     case "2001":
                         Clipboard.SetText(this.SelectedProperty.Name);
