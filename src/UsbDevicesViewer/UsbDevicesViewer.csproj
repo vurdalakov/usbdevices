@@ -72,9 +72,9 @@
     <Compile Include="Vurdalakov\NameValueViewModel.cs" />
     <Compile Include="Vurdalakov\ThreadSafeObservableCollection.cs" />
     <Compile Include="Vurdalakov\ViewModelBase.cs" />
-    <Compile Include="Win32UsbControllerDevice.cs" />
-    <Compile Include="Win32UsbControllerDeviceEventArgs.cs" />
-    <Compile Include="Win32UsbControllerDevices.cs" />
+    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevice.cs" />
+    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDeviceEventArgs.cs" />
+    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevices.cs" />
     <Compile Include="DeviceEvent.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
