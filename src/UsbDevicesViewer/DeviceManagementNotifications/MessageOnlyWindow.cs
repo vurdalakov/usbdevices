@@ -38,14 +38,16 @@
             wndClassEx.hInstance = this.hInstance;
             wndClassEx.lpszClassName = className;
 
-            this.classAtom = RegisterClassEx(ref wndClassEx);
-            if (IntPtr.Zero == this.classAtom)
+            UInt32 atom = RegisterClassEx(ref wndClassEx);
+            if (0 == atom)
             {
                 Tracer.Trace("RegisterClassEx failed with error {0}", Marshal.GetLastWin32Error());
                 return false;
             }
 
-            this.WindowHandle = CreateWindowEx(0, this.classAtom, null, 0, 0, 0, 0, 0, new IntPtr(HWND_MESSAGE), IntPtr.Zero, this.hInstance, IntPtr.Zero);
+            this.classAtom = new IntPtr(atom);
+
+            this.WindowHandle = CreateWindowEx(0, this.classAtom, IntPtr.Zero, 0, 0, 0, 0, 0, new IntPtr(HWND_MESSAGE), IntPtr.Zero, this.hInstance, IntPtr.Zero);
             if (IntPtr.Zero == this.WindowHandle)
             {
                 Tracer.Trace("CreateWindowEx failed with error {0}", Marshal.GetLastWin32Error());
@@ -102,7 +104,7 @@
         public static extern IntPtr GetModuleHandle(String lpModuleName);
         
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr RegisterClassEx(ref WNDCLASSEX lpwcx);
+        public static extern UInt32 RegisterClassEx(ref WNDCLASSEX lpwcx);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern Boolean UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
@@ -110,7 +112,7 @@
         public const Int32 HWND_MESSAGE = -3;
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr CreateWindowEx(UInt32 dwExStyle, IntPtr lpClassName, String lpWindowName, UInt32 dwStyle,
+        public static extern IntPtr CreateWindowEx(UInt32 dwExStyle, IntPtr lpClassName, IntPtr lpWindowName, UInt32 dwStyle,
            Int32 x, Int32 y, Int32 nWidth, Int32 nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
 
         [DllImport("user32.dll", SetLastError = true)]
