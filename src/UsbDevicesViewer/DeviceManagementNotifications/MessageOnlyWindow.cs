@@ -38,7 +38,7 @@
             wndClassEx.hInstance = this.hInstance;
             wndClassEx.lpszClassName = className;
 
-            UInt32 atom = RegisterClassEx(ref wndClassEx);
+            UInt16 atom = RegisterClassEx(ref wndClassEx);
             if (0 == atom)
             {
                 Tracer.Trace("RegisterClassEx failed with error {0}", Marshal.GetLastWin32Error());
@@ -104,7 +104,7 @@
         public static extern IntPtr GetModuleHandle(String lpModuleName);
         
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern UInt32 RegisterClassEx(ref WNDCLASSEX lpwcx);
+        public static extern UInt16 RegisterClassEx(ref WNDCLASSEX lpwcx);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern Boolean UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
