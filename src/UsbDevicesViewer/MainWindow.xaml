@@ -71,9 +71,12 @@
 
             <TabItem>
                 <TabItem.Header>
-                    <TextBlock>
-                        <Run Text="USB Devices ("/><Run Text="{Binding UsbDevices.Count, Mode=OneWay}"/><Run Text=")"/>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="12" Height="12" Source="Images/usbdevice.png" Margin="-1,0,4,0"/>
+                        <TextBlock>
+                            <Run Text="USB Devices ("/><Run Text="{Binding UsbDevices.Count, Mode=OneWay}"/><Run Text=")"/>
+                        </TextBlock>
+                    </StackPanel>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
@@ -139,9 +142,12 @@
 
             <TabItem>
                 <TabItem.Header>
-                    <TextBlock>
-                        <Run Text="USB Hubs ("/><Run Text="{Binding UsbHubs.Count, Mode=OneWay}"/><Run Text=")"/>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="12" Height="12" Source="Images/usbhub.png" Margin="-1,0,4,0"/>
+                        <TextBlock>
+                            <Run Text="USB Hubs ("/><Run Text="{Binding UsbHubs.Count, Mode=OneWay}"/><Run Text=")"/>
+                        </TextBlock>
+                    </StackPanel>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbHubs}" SelectedItem="{Binding SelectedUsbHub, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
@@ -207,9 +213,12 @@
 
             <TabItem>
                 <TabItem.Header>
-                    <TextBlock>
-                        <Run Text="USB Host Controllers ("/><Run Text="{Binding UsbHostControllers.Count, Mode=OneWay}"/><Run Text=")"/>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="12" Height="12" Source="Images/usbcontroller.png" Margin="-1,0,4,0"/>
+                        <TextBlock>
+                            <Run Text="USB Host Controllers ("/><Run Text="{Binding UsbHostControllers.Count, Mode=OneWay}"/><Run Text=")"/>
+                        </TextBlock>
+                    </StackPanel>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbHostControllers}" SelectedItem="{Binding SelectedUsbHostController, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
                     <ListView.ContextMenu>
