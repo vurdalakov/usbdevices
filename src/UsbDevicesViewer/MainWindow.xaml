@@ -265,6 +265,11 @@
                             <TextBlock Text="{Binding TreeViewTitle}" />
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="True" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
                 </TreeView>
             </TabItem>
 
