@@ -72,9 +72,7 @@
             <TabItem>
                 <TabItem.Header>
                     <TextBlock>
-                        <Run Text="USB Devices ("/>
-                        <Run Text="{Binding UsbDevices.Count, Mode=OneWay}"/>
-                        <Run Text=")"/>
+                        <Run Text="USB Devices ("/><Run Text="{Binding UsbDevices.Count, Mode=OneWay}"/><Run Text=")"/>
                     </TextBlock>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbDevices}" SelectedItem="{Binding SelectedUsbDevice, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
@@ -142,9 +140,7 @@
             <TabItem>
                 <TabItem.Header>
                     <TextBlock>
-                        <Run Text="USB Hubs ("/>
-                        <Run Text="{Binding UsbHubs.Count, Mode=OneWay}"/>
-                        <Run Text=")"/>
+                        <Run Text="USB Hubs ("/><Run Text="{Binding UsbHubs.Count, Mode=OneWay}"/><Run Text=")"/>
                     </TextBlock>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbHubs}" SelectedItem="{Binding SelectedUsbHub, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
@@ -212,9 +208,7 @@
             <TabItem>
                 <TabItem.Header>
                     <TextBlock>
-                        <Run Text="USB Host Controllers ("/>
-                        <Run Text="{Binding UsbHostControllers.Count, Mode=OneWay}"/>
-                        <Run Text=")"/>
+                        <Run Text="USB Host Controllers ("/><Run Text="{Binding UsbHostControllers.Count, Mode=OneWay}"/><Run Text=")"/>
                     </TextBlock>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding UsbHostControllers}" SelectedItem="{Binding SelectedUsbHostController, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">
@@ -262,7 +256,10 @@
                 <TreeView ItemsSource="{Binding UsbTreeItems}" vurdalakov:TreeViewSelectedItemBehavior.SelectedItem="{Binding SelectedUsbTreeItem}">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type local:UsbDeviceViewModel}" ItemsSource="{Binding TreeViewItems}">
-                            <TextBlock Text="{Binding TreeViewTitle}" />
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="12" Height="12" Source="{Binding TreeViewIcon}" Margin="-1,0,4,0"/>
+                                <TextBlock Text="{Binding TreeViewTitle}" />
+                            </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                     <TreeView.ItemContainerStyle>
@@ -276,9 +273,7 @@
             <TabItem HorizontalAlignment="Right" DockPanel.Dock="Right">
                 <TabItem.Header>
                     <TextBlock>
-                        <Run Text="Device Events ("/>
-                        <Run Text="{Binding DeviceEvents.Count, Mode=OneWay}"/>
-                        <Run Text=")"/>
+                        <Run Text="Device Events ("/><Run Text="{Binding DeviceEvents.Count, Mode=OneWay}"/><Run Text=")"/>
                     </TextBlock>
                 </TabItem.Header>
                 <ListView ItemsSource="{Binding DeviceEvents}" SelectedItem="{Binding SelectedDeviceEvent, Mode=TwoWay}" ScrollViewer.CanContentScroll="False" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}">

@@ -31,13 +31,16 @@
 
         #region treeview support
 
+        public String TreeViewIcon { get; private set; }
+
         public String TreeViewTitle { get; private set; }
 
         public ThreadSafeObservableCollection<UsbDeviceViewModel> TreeViewItems { get; private set; }
 
-        public UsbDeviceViewModel(String treeViewTitle) // e.g. "My Computer"
+        public UsbDeviceViewModel() // virtual root item
         {
-            this.TreeViewTitle = treeViewTitle;
+            this.TreeViewIcon = "Images/usbroot.png";
+            this.TreeViewTitle = "My Computer";
             this.TreeViewItems = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
         }
         
@@ -98,14 +101,17 @@
                         case "usbohci":
                         case "usbehci":
                         case "openhci": // usb11
-                            DeviceType = UsbDeviceType.Controller;
+                            this.DeviceType = UsbDeviceType.Controller;
+                            this.TreeViewIcon = "Images/usbcontroller.png";
                             break;
                         case "usbhub3":
                         case "usbhub":
-                            DeviceType = UsbDeviceType.Hub;
+                            this.DeviceType = UsbDeviceType.Hub;
+                            this.TreeViewIcon = "Images/usbhub.png";
                             break;
                         default:
-                            DeviceType = UsbDeviceType.Device;
+                            this.DeviceType = UsbDeviceType.Device;
+                            this.TreeViewIcon = "Images/usbdevice.png";
                             break;
                     }
                 }

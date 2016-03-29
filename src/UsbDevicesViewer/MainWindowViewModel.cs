@@ -461,7 +461,8 @@
         {
             this.UsbTreeItems.Clear();
 
-            var root = new UsbDeviceViewModel("My computer");
+            var root = new UsbDeviceViewModel();
+
             foreach (var controller in this.UsbHostControllers)
             {
                 root.TreeViewItems.Add(controller);
