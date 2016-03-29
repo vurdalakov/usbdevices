@@ -5,6 +5,13 @@
     using Vurdalakov;
     using Vurdalakov.UsbDevicesDotNet;
 
+    public enum UsbDeviceType
+    {
+        Controller,
+        Hub,
+        Device
+    }
+
     public class UsbDeviceViewModel : ViewModelBase
     {
         public String Vid { get; private set; }
@@ -13,6 +20,8 @@
         public String DeviceId { get; private set; }
         public String DevicePath { get; private set; }
         public String Description { get; private set; }
+        public String ParentDeviceId { get; private set; }
+        public UsbDeviceType DeviceType { get; private set; }
 
         public ThreadSafeObservableCollection<NameValueTypeViewModel> Properties { get; private set; }
 
@@ -20,11 +29,27 @@
 
         public ThreadSafeObservableCollection<NameValueTypeViewModel> Interfaces { get; private set; }
 
+        #region treeview support
+
+        public String TreeViewTitle { get; private set; }
+
+        public ThreadSafeObservableCollection<UsbDeviceViewModel> TreeViewItems { get; private set; }
+
+        public UsbDeviceViewModel(String treeViewTitle) // e.g. "My Computer"
+        {
+            this.TreeViewTitle = treeViewTitle;
+            this.TreeViewItems = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
+        }
+        
+        #endregion
+
         public UsbDeviceViewModel(UsbDevice usbDevice)
         {
             this.Properties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
             this.RegistryProperties = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
             this.Interfaces = new ThreadSafeObservableCollection<NameValueTypeViewModel>();
+
+            this.TreeViewItems = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
             this.Refresh(usbDevice);
         }
@@ -55,6 +80,35 @@
                 String[] values = usbDeviceProperty.GetValues();
 
                 this.Properties.Add(new NameValueTypeViewModel(usbDeviceProperty.GetDescription(), values[0], usbDeviceProperty.GetType()));
+
+                if (usbDeviceProperty.HasSameKey(UsbDeviceWinApi.DevicePropertyKeys.DEVPKEY_Device_DeviceDesc))
+                {
+                    this.TreeViewTitle = values[0];
+                }
+                else if (usbDeviceProperty.HasSameKey(UsbDeviceWinApi.DevicePropertyKeys.DEVPKEY_Device_Parent))
+                {
+                    this.ParentDeviceId = values[0];
+                }
+                else if (usbDeviceProperty.HasSameKey(UsbDeviceWinApi.DevicePropertyKeys.DEVPKEY_Device_Service))
+                {
+                    switch (values[0].ToLower())
+                    {
+                        case "usbxhci": // usb3
+                        case "usbuhci": // usb2
+                        case "usbohci":
+                        case "usbehci":
+                        case "openhci": // usb11
+                            DeviceType = UsbDeviceType.Controller;
+                            break;
+                        case "usbhub3":
+                        case "usbhub":
+                            DeviceType = UsbDeviceType.Hub;
+                            break;
+                        default:
+                            DeviceType = UsbDeviceType.Device;
+                            break;
+                    }
+                }
 
                 for (int i = 1; i < values.Length; i++)
                 {

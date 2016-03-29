@@ -102,6 +102,27 @@
             }
         }
 
+        public ThreadSafeObservableCollection<UsbDeviceViewModel> UsbTreeItems { get; private set; }
+
+        private UsbDeviceViewModel selectedUsbTreeItem;
+        public UsbDeviceViewModel SelectedUsbTreeItem
+        {
+            get
+            {
+                return this.selectedUsbTreeItem;
+            }
+            set
+            {
+                if (value != this.selectedUsbTreeItem)
+                {
+                    this.selectedUsbTreeItem = value;
+                    this.OnPropertyChanged(() => this.SelectedUsbTreeItem);
+
+                    this.SelectedDevice = this.selectedUsbTreeItem;
+                }
+            }
+        }
+
         private UsbDeviceViewModel selectedDevice;
         public UsbDeviceViewModel SelectedDevice
         {
@@ -175,6 +196,7 @@
             this.UsbDevices = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
             this.UsbHubs = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
             this.UsbHostControllers = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
+            this.UsbTreeItems = new ThreadSafeObservableCollection<UsbDeviceViewModel>();
 
             this.DeviceEvents = new ThreadSafeObservableCollection<DeviceEvent>();
 
@@ -368,6 +390,7 @@
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_DEVICE, this.UsbDevices, this.SelectedUsbDevice, d => this.SelectedUsbDevice = d, deviceId, devicePath);
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HUB, this.UsbHubs, this.SelectedUsbHub, d => this.SelectedUsbHub = d);
             this.Refresh(UsbDeviceWinApi.GUID_DEVINTERFACE_USB_HOST_CONTROLLER, this.UsbHostControllers, this.SelectedUsbHostController, d => this.SelectedUsbHostController = d);
+            this.RefreshTree();
 
             if (null == this.SelectedDevice)
             {
@@ -431,6 +454,53 @@
             if (deviceList.Count > 0)
             {
                 setSelectedDevice(deviceList[0]);
+            }
+        }
+
+        private void RefreshTree()
+        {
+            this.UsbTreeItems.Clear();
+
+            var root = new UsbDeviceViewModel("My computer");
+            foreach (var controller in this.UsbHostControllers)
+            {
+                root.TreeViewItems.Add(controller);
+
+                controller.TreeViewItems.Clear();
+                foreach (var hub in this.UsbHubs)
+                {
+                    if (hub.ParentDeviceId.Equals(controller.DeviceId, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        controller.TreeViewItems.Add(hub);
+
+                        FillUsbHub(hub);
+                    }
+                }
+            }
+
+            this.UsbTreeItems.Add(root);
+        }
+
+        private void FillUsbHub(UsbDeviceViewModel hub)
+        {
+            hub.TreeViewItems.Clear();
+
+            foreach (var subhub in this.UsbHubs)
+            {
+                if (subhub.ParentDeviceId.Equals(hub.DeviceId, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    hub.TreeViewItems.Add(subhub);
+
+                    FillUsbHub(subhub);
+                }
+            }
+
+            foreach (var device in this.UsbDevices)
+            {
+                if (device.ParentDeviceId.Equals(hub.DeviceId, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    hub.TreeViewItems.Add(device);
+                }
             }
         }
 

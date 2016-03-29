@@ -71,6 +71,7 @@
     <Compile Include="Vurdalakov\NameValueTypeViewModel.cs" />
     <Compile Include="Vurdalakov\NameValueViewModel.cs" />
     <Compile Include="Vurdalakov\ThreadSafeObservableCollection.cs" />
+    <Compile Include="Vurdalakov\TreeViewSelectedItemBehavior.cs" />
     <Compile Include="Vurdalakov\ViewModelBase.cs" />
     <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevice.cs" />
     <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDeviceEventArgs.cs" />
