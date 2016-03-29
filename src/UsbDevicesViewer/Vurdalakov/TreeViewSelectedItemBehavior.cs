@@ -6,9 +6,51 @@
     using System.Windows.Input;
 
     // xmlns:vurdalakov="clr-namespace:Vurdalakov"
-    // <TreeView vurdalakov:SelectedItem="{Binding TreeViewSelectedItem}" />
+    // <TreeView vurdalakov:TreeViewSelectedItemBehavior.SelectedItem="{Binding TreeViewSelectedItem}" />
     public class TreeViewSelectedItemBehavior : DependencyObject
     {
+        public static readonly DependencyProperty AttachProperty =
+            DependencyProperty.RegisterAttached("Attach", typeof(Boolean), typeof(TreeViewSelectedItemBehavior), new UIPropertyMetadata(false, OnAttachChanged));
+
+        public static Boolean GetAttach(DependencyObject dependencyObject)
+        {
+            return (Boolean)dependencyObject.GetValue(SelectedItemProperty);
+        }
+
+        public static void SetAttach(DependencyObject dependencyObject, Boolean value)
+        {
+            dependencyObject.SetValue(SelectedItemProperty, value);
+        }
+
+        private static void OnAttachChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var treeView = sender as TreeView;
+
+            if (treeView != null)
+            {
+                var attach = (Boolean)e.NewValue;
+
+                if (attach)
+                {
+                    treeView.SelectedItemChanged += OnTreeViewSelectedItemChanged;
+                }
+                else
+                {
+                    treeView.SelectedItemChanged -= OnTreeViewSelectedItemChanged;
+                }
+            }
+        }
+
+        private static void OnTreeViewSelectedItemChanged(Object sender, RoutedPropertyChangedEventArgs<Object> e)
+        {
+            var treeView = sender as TreeView;
+
+            if (treeView != null)
+            {
+                SetSelectedItem(sender as DependencyObject, treeView.SelectedItem);
+            }
+        }
+
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register("SelectedItem", typeof(Object), typeof(TreeViewSelectedItemBehavior), new UIPropertyMetadata(null, OnSelectedItemChanged));
 
@@ -24,11 +66,11 @@
 
         private static void OnSelectedItemChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var item = e.NewValue as TreeViewItem;
+            var treeViewItem = e.NewValue as TreeViewItem;
 
-            if (item != null)
+            if (treeViewItem != null)
             {
-                item.SetValue(TreeViewItem.IsSelectedProperty, true);
+                treeViewItem.SetValue(TreeViewItem.IsSelectedProperty, true);
             }
         }
 

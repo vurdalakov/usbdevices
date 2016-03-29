@@ -35,7 +35,7 @@
                         break;
                 }
 
-                this.PropertiesHeight = 3 == this.selectedDeviceType ? "0" : "3*";
+                this.PropertiesHeight = 4 == this.selectedDeviceType ? "0" : "2*";
             }
         }
 
@@ -605,7 +605,7 @@
             catch { }
         }
 
-        private String propertiesHeight = "3*";
+        private String propertiesHeight = "2*";
         public String PropertiesHeight
         {
             get { return this.propertiesHeight; }
