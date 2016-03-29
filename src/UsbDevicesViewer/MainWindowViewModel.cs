@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Windows;
     using System.Windows.Input;
 
@@ -10,6 +11,8 @@
 
     public class MainWindowViewModel : ViewModelBase
     {
+        public String ApplicationTitle { get; private set; }
+
         private Int32 selectedDeviceType;
         public Int32 SelectedDeviceType
         {
@@ -206,6 +209,11 @@
             this.ClearDeviceEventsCommand = new CommandBase<String>(this.OnClearDeviceEventsCommand);
 
             this.EnableDeviceWatcher(true);
+
+            var assemblyFullName = Assembly.GetExecutingAssembly().FullName;
+            var version = assemblyFullName.Split(',')[1].Split('=')[1].Split('.');
+            this.ApplicationTitle += String.Format("USB Devices Viewer {0}.{1}", version[0], version[1].PadLeft(2, '0'));
+
         }
 
         public void Close()
