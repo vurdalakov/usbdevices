@@ -94,6 +94,7 @@
                 }
 
                 this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
             }
         }
 
