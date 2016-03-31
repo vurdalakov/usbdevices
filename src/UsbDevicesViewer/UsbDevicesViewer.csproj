@@ -58,6 +58,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeviceManagementNotifications\DeviceManagementNotificationsEventArgs.cs" />
     <Compile Include="DeviceManagementNotifications\DeviceManagementNotifications.cs" />
     <Compile Include="Helpers.cs" />
@@ -73,10 +76,15 @@
     <Compile Include="Vurdalakov\ThreadSafeObservableCollection.cs" />
     <Compile Include="Vurdalakov\TreeViewSelectedItemBehavior.cs" />
     <Compile Include="Vurdalakov\ViewModelBase.cs" />
+    <Compile Include="Vurdalakov\WindowExtensions.cs" />
     <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevice.cs" />
     <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDeviceEventArgs.cs" />
     <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevices.cs" />
     <Compile Include="DeviceEvent.cs" />
+    <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
