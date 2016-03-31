@@ -203,7 +203,9 @@
 
             this.DeviceEvents = new ThreadSafeObservableCollection<DeviceEvent>();
 
+            this.ExitCommand = new CommandBase(this.OnExitCommand);
             this.RefreshCommand = new CommandBase(this.OnRefreshCommand);
+            this.AboutCommand = new CommandBase(this.OnAboutCommand);
 
             this.CopyCommand = new CommandBase<String>(this.OnCopyCommand);
             this.ClearDeviceEventsCommand = new CommandBase<String>(this.OnClearDeviceEventsCommand);
@@ -385,10 +387,21 @@
 
         #endregion
 
+        public ICommand ExitCommand { get; private set; }
+        public void OnExitCommand()
+        {
+            Application.Current.MainWindow.Close();
+        }
+
         public ICommand RefreshCommand { get; private set; }
         public void OnRefreshCommand()
         {
             this.Refresh();
+        }
+
+        public ICommand AboutCommand { get; private set; }
+        public void OnAboutCommand()
+        {
         }
 
         public String Summary { get; private set; }

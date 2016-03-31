@@ -14,19 +14,28 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!--DockPanel Grid.Row="0">
+        <DockPanel Grid.Row="0">
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
                     <Menu ToolBar.OverflowMode="Never">
                         <MenuItem Header="File">
-                            <MenuItem Header="Exit" />
+                            <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="View">
+                            <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="Options">
+                            <MenuItem Header="Refresh on Device Management events" IsChecked="{Binding RefreshListOnDeviceManagementEvents}" IsCheckable="True" />
+                            <MenuItem Header="Refresh on WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" IsCheckable="True" />
+                            <Separator />
+                            <MenuItem Header="Autoselect connected device" IsChecked="{Binding SelectConnectedDevice}" IsCheckable="True" />
                         </MenuItem>
                     </Menu>
                 </ToolBar>
             </ToolBarPanel>
-        </DockPanel-->
+        </DockPanel>
 
-        <DockPanel Grid.Row="1">
+        <!--DockPanel Grid.Row="1">
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
                     <Button Margin="8,0,8,0" Command="{Binding RefreshCommand}">
@@ -46,7 +55,7 @@
                     </Grid>
                 </ToolBar>
             </ToolBarPanel>
-        </DockPanel>
+        </DockPanel-->
 
         <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedDeviceType}">
 

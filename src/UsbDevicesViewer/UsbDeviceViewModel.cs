@@ -87,6 +87,10 @@
                 if (usbDeviceProperty.HasSameKey(UsbDeviceWinApi.DevicePropertyKeys.DEVPKEY_Device_DeviceDesc))
                 {
                     this.TreeViewTitle = values[0];
+                    if (!String.IsNullOrEmpty(this.Description))
+                    {
+                        this.TreeViewTitle += String.Format(" ({0})", this.Description.Trim());
+                    }
                 }
                 else if (usbDeviceProperty.HasSameKey(UsbDeviceWinApi.DevicePropertyKeys.DEVPKEY_Device_Parent))
                 {
