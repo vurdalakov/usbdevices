@@ -4,6 +4,12 @@
         xmlns:local="clr-namespace:UsbDevicesViewer"
         xmlns:vurdalakov="clr-namespace:Vurdalakov"
         Title="{Binding ApplicationTitleAndVersion}" Width="1200" Height="800">
+    
+    <Window.InputBindings>
+        <KeyBinding Key="X" Modifiers="Alt" Command="{Binding ExitCommand}" />
+        <KeyBinding Key="F5" Modifiers="" Command="{Binding RefreshCommand}" />
+    </Window.InputBindings>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -18,20 +24,20 @@
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar ToolBarTray.IsLocked="True">
                     <Menu ToolBar.OverflowMode="Never">
-                        <MenuItem Header="File">
-                            <MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                        <MenuItem Header="_File">
+                            <MenuItem Header="E_xit" InputGestureText="Alt+X" Command="{Binding ExitCommand}" />
                         </MenuItem>
-                        <MenuItem Header="View">
-                            <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" />
+                        <MenuItem Header="_View">
+                            <MenuItem Header="_Refresh" InputGestureText="F5" Command="{Binding RefreshCommand}" />
                         </MenuItem>
-                        <MenuItem Header="Options">
-                            <MenuItem Header="Refresh on Device Management events" IsChecked="{Binding RefreshListOnDeviceManagementEvents}" IsCheckable="True" />
-                            <MenuItem Header="Refresh on WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" IsCheckable="True" />
+                        <MenuItem Header="_Options">
+                            <MenuItem Header="Refresh on _Device Management events" IsChecked="{Binding RefreshListOnDeviceManagementEvents}" IsCheckable="True" />
+                            <MenuItem Header="Refresh on _WMI events" IsChecked="{Binding RefreshListOnWmiEvents}" IsCheckable="True" />
                             <Separator />
-                            <MenuItem Header="Autoselect connected device" IsChecked="{Binding SelectConnectedDevice}" IsCheckable="True" />
+                            <MenuItem Header="_Autoselect connected device" IsChecked="{Binding SelectConnectedDevice}" IsCheckable="True" />
                         </MenuItem>
-                        <MenuItem Header="Help">
-                            <MenuItem Header="About..." Command="{Binding AboutCommand}" />
+                        <MenuItem Header="_Help">
+                            <MenuItem Header="_About..." Command="{Binding AboutCommand}" />
                         </MenuItem>
                     </Menu>
                 </ToolBar>
