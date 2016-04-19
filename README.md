@@ -1,14 +1,14 @@
 usbdevices
 ==========
 
+Visit project Wiki for more information and examples:
+https://github.com/vurdalakov/usbdevices/wiki
+
+Distributed under the terms of the [MIT license](https://opensource.org/licenses/MIT).
+
 #### UsbDevicesDotNet.dll
 
 .NET library that uses Setup API to list all USB devices attached to local computer.
-
-Visit project Wiki fr more information and examples:
-https://github.com/vurdalakov/usbdevices/wiki
-
-Project is licensed under the MIT license.
 
 #### USB Devices Viewer
 
