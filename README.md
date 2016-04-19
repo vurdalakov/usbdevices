@@ -12,4 +12,6 @@ Project is licensed under the MIT license.
 
 #### USB Devices Viewer
 
+WPF UI application that shows all available USB devices, hubs and controllers, all their properties, USB events and a system USB devices tree.
+
 ![Screenshots of USB Devices Viewer](https://raw.githubusercontent.com/vurdalakov/usbdevices/master/img/usbdevicesviewer.gif)
