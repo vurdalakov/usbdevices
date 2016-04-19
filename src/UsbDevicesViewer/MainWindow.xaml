@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:UsbDevicesViewer"
         xmlns:vurdalakov="clr-namespace:Vurdalakov"
-        Title="{Binding ApplicationTitleAndVersion}" Width="1200" Height="800">
+        Title="{Binding ApplicationTitleAndVersion}" Icon="Images/application.ico"
+        Width="1200" Height="800">
     
     <Window.InputBindings>
         <KeyBinding Key="X" Modifiers="Alt" Command="{Binding ExitCommand}" />
