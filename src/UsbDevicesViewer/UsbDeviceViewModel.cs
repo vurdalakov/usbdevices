@@ -140,9 +140,9 @@
             }
 
             this.Interfaces.Clear();
-            foreach (String interfaceId in usbDevice.InterfaceIds)
+            foreach (var deviceInterface in usbDevice.Interfaces)
             {
-                this.Interfaces.Add(new NameValueTypeViewModel(String.Empty, interfaceId, String.Empty));
+                this.Interfaces.Add(new NameValueTypeViewModel(String.Empty, deviceInterface.InterfaceId, String.Empty));
             }
         }
     }

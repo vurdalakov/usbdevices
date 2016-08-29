@@ -46,7 +46,7 @@
 
                 index++;
 
-                devices.Add(UsbDeviceInterface.GetUsbDevice(this.handle, deviceInterfaceData));
+                devices.Add(UsbDeviceInterfaceData.GetUsbDevice(this.handle, deviceInterfaceData));
             }
 
             return devices.ToArray();

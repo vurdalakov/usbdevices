@@ -16,9 +16,9 @@
                 Console.WriteLine("Hub:Port = {0}:{1}", usbDevice.Hub, usbDevice.Port);
                 Console.WriteLine("Device ID     = {0}", usbDevice.DeviceId);
 
-                foreach (String interfaceId in usbDevice.InterfaceIds)
+                foreach (var deviceInterface in usbDevice.Interfaces)
                 {
-                    Console.WriteLine("Interface ID  = {0}", interfaceId);
+                    Console.WriteLine("Interface ID  = {0}", deviceInterface.InterfaceId);
                 }
 
                 Console.WriteLine("LocationInformation = {0}", usbDevice.GetRegistryPropertyValue(UsbDeviceWinApi.DeviceRegistryPropertyKeys.SPDRP_LOCATION_INFORMATION));

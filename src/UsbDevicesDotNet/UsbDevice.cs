@@ -14,7 +14,7 @@
         public String DevicePath { get; internal set; }
         public String DeviceId { get; internal set; }
 
-        public String[] InterfaceIds { get; internal set; }
+        public UsbDeviceInterface[] Interfaces { get; internal set; }
 
         public String BusReportedDeviceDescription { get; internal set; }
 

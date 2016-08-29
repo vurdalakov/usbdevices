@@ -40,12 +40,13 @@
   <ItemGroup>
     <Compile Include="Endianness.cs" />
     <Compile Include="Tracer.cs" />
+    <Compile Include="UsbDeviceInterface.cs" />
     <Compile Include="UsbDeviceRegistryProperty.cs" />
     <Compile Include="MarshalEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UsbDevice.cs" />
     <Compile Include="UsbDeviceBase.cs" />
-    <Compile Include="UsbDeviceInterface.cs" />
+    <Compile Include="UsbDeviceInterfaceData.cs" />
     <Compile Include="UsbDeviceProperty.cs" />
     <Compile Include="UsbDevices.cs" />
     <Compile Include="UsbDeviceWinApi.cs" />
