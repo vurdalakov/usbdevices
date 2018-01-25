@@ -1,10 +1,7 @@
-﻿namespace UsbDevicesViewer
+﻿namespace Vurdalakov.UsbDevicesDotNet
 {
     using System;
     using System.Runtime.InteropServices;
-
-    using Vurdalakov;
-    using Vurdalakov.UsbDevicesDotNet;
 
     public class MessageOnlyWindow : IDisposable
     {

@@ -2,6 +2,7 @@
 {
     using System;
     using Vurdalakov;
+    using Vurdalakov.UsbDevicesDotNet;
 
     public class DeviceEvent : ViewModelBase
     {

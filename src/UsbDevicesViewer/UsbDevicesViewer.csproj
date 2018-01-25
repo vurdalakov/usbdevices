@@ -39,13 +39,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -61,10 +56,7 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DeviceManagementNotifications\DeviceManagementNotificationsEventArgs.cs" />
-    <Compile Include="DeviceManagementNotifications\DeviceManagementNotifications.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="DeviceManagementNotifications\MessageOnlyWindow.cs" />
     <Compile Include="UsbDeviceViewModel.cs" />
     <Compile Include="Vurdalakov\BooleanToObjectConverter.cs" />
     <Compile Include="Vurdalakov\BooleanToVisibilityConverter.cs" />
@@ -77,9 +69,6 @@
     <Compile Include="Vurdalakov\TreeViewSelectedItemBehavior.cs" />
     <Compile Include="Vurdalakov\ViewModelBase.cs" />
     <Compile Include="Vurdalakov\WindowExtensions.cs" />
-    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevice.cs" />
-    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDeviceEventArgs.cs" />
-    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevices.cs" />
     <Compile Include="DeviceEvent.cs" />
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>

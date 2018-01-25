@@ -1,4 +1,4 @@
-﻿namespace UsbDevicesViewer
+﻿namespace Vurdalakov.UsbDevicesDotNet
 {
     using System;
 

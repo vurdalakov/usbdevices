@@ -36,8 +36,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeviceManagementNotifications\DeviceManagementNotifications.cs" />
+    <Compile Include="DeviceManagementNotifications\DeviceManagementNotificationsEventArgs.cs" />
+    <Compile Include="DeviceManagementNotifications\MessageOnlyWindow.cs" />
     <Compile Include="Endianness.cs" />
     <Compile Include="Tracer.cs" />
     <Compile Include="UsbDeviceInterface.cs" />
@@ -54,6 +58,9 @@
     <Compile Include="UsbDeviceWinApi.DevicePropertyTypes.cs" />
     <Compile Include="UsbDeviceWinApi.DeviceRegistryPropertyKeys.cs" />
     <Compile Include="UsbDeviceWinApi.DeviceRegistryPropertyTypes.cs" />
+    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevice.cs" />
+    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDeviceEventArgs.cs" />
+    <Compile Include="Win32UsbControllerDevice\Win32UsbControllerDevices.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

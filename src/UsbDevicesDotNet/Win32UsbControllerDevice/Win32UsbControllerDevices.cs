@@ -1,9 +1,8 @@
-﻿namespace UsbDevicesViewer
+﻿namespace Vurdalakov.UsbDevicesDotNet
 {
     using System;
     using System.Management;
     using Microsoft.Win32;
-    using Vurdalakov.UsbDevicesDotNet;
 
     public class Win32UsbControllerDevices
     {
