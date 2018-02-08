@@ -65,11 +65,13 @@
     <Compile Include="Vurdalakov\IntegerToObjectConverter.cs" />
     <Compile Include="Vurdalakov\NameValueTypeViewModel.cs" />
     <Compile Include="Vurdalakov\NameValueViewModel.cs" />
+    <Compile Include="Vurdalakov\SerializeTool.cs" />
     <Compile Include="Vurdalakov\ThreadSafeObservableCollection.cs" />
     <Compile Include="Vurdalakov\TreeViewSelectedItemBehavior.cs" />
     <Compile Include="Vurdalakov\ViewModelBase.cs" />
     <Compile Include="Vurdalakov\WindowExtensions.cs" />
     <Compile Include="DeviceEvent.cs" />
+    <Compile Include="Vurdalakov\WindowPlacement.cs" />
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
